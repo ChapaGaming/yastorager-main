@@ -280,27 +280,28 @@
             background-position: right 1rem center;
         }
 
-        .readonly-field {
-            background: rgba(255, 255, 255, 0.02);
-            border-color: rgba(255, 255, 255, 0.02);
-            color: #6b7280;
-            cursor: not-allowed;
+        /* Стили для полей оператора */
+        .operator-field {
+            background: rgba(0, 0, 0, 0.3);
+            border-color: rgba(59, 130, 246, 0.3);
         }
 
         .field-note {
             font-size: 0.7rem;
             color: #6b7280;
             margin-top: 0.25rem;
-            display: block;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
         }
 
         .field-note i {
-            color: #60a5fa;
+            color: #3b82f6;
             font-size: 0.7rem;
         }
 
-        /* Система заявок для оператора */
-        .request-section {
+        /* Форма создания заявки */
+        .request-form-section {
             grid-column: span 2;
             background: rgba(59, 130, 246, 0.05);
             border: 1px solid rgba(59, 130, 246, 0.1);
@@ -309,7 +310,7 @@
             margin-top: 1rem;
         }
 
-        .request-section h3 {
+        .request-form-section h3 {
             color: #3b82f6;
             font-size: 1.1rem;
             margin-bottom: 1rem;
@@ -318,38 +319,36 @@
             gap: 0.5rem;
         }
 
-        .request-field {
+        .request-fields-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+
+        .request-field-group {
             margin-bottom: 1rem;
-            padding: 1rem;
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 0.75rem;
-            border-left: 3px solid #3b82f6;
         }
 
-        .request-field-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 0.5rem;
-        }
-
-        .request-field-name {
-            font-weight: 600;
+        .request-field-group label {
+            font-size: 0.75rem;
             color: #93c5fd;
         }
 
-        .request-current-value {
-            font-size: 0.85rem;
+        .request-field-group input,
+        .request-field-group select {
+            background: rgba(0, 0, 0, 0.4);
+            border-color: rgba(59, 130, 246, 0.2);
+        }
+
+        .current-value-badge {
+            font-size: 0.7rem;
             color: #9ca3af;
+            margin-top: 0.25rem;
         }
 
-        .request-input {
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .request-input input, .request-input select {
-            flex: 1;
+        .current-value-badge i {
+            color: #3b82f6;
+            margin-right: 0.25rem;
         }
 
         .request-priority {
@@ -384,6 +383,129 @@
 
         .request-comment {
             margin-top: 1rem;
+        }
+
+        /* Список заявок */
+        .requests-list-section {
+            grid-column: span 2;
+            margin-top: 2rem;
+        }
+
+        .requests-list-section h3 {
+            color: #f0f0f0;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .requests-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1rem;
+        }
+
+        .request-card {
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 1rem;
+            padding: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            transition: all 0.2s;
+        }
+
+        .request-card:hover {
+            background: rgba(255, 255, 255, 0.04);
+            transform: translateY(-2px);
+        }
+
+        .request-card.pending {
+            border-left: 3px solid #fbbf24;
+        }
+
+        .request-card.approved {
+            border-left: 3px solid #34d399;
+        }
+
+        .request-card.rejected {
+            border-left: 3px solid #ef4444;
+            opacity: 0.7;
+        }
+
+        .request-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .request-priority-badge {
+            font-size: 0.8rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .request-date {
+            font-size: 0.7rem;
+            color: #6b7280;
+        }
+
+        .request-changes {
+            margin: 0.75rem 0;
+            padding: 0.5rem;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 0.5rem;
+        }
+
+        .change-item {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            padding: 0.25rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .change-item:last-child {
+            border-bottom: none;
+        }
+
+        .change-field {
+            color: #9ca3af;
+        }
+
+        .change-value {
+            color: #93c5fd;
+            font-weight: 500;
+        }
+
+        .request-status {
+            font-size: 0.8rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            display: inline-block;
+        }
+
+        .status-pending {
+            background: rgba(251, 191, 36, 0.1);
+            color: #fbbf24;
+        }
+
+        .status-approved {
+            background: rgba(52, 211, 153, 0.1);
+            color: #34d399;
+        }
+
+        .status-rejected {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+        }
+
+        .request-comment-text {
+            font-size: 0.8rem;
+            color: #9ca3af;
+            margin-top: 0.5rem;
+            padding-top: 0.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         /* Кнопки действий */
@@ -432,81 +554,13 @@
         }
 
         .btn-request {
-            background: rgba(59, 130, 246, 0.2);
-            color: #93c5fd;
-            border: 1px solid rgba(59, 130, 246, 0.3);
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
         }
 
         .btn-request:hover {
-            background: rgba(59, 130, 246, 0.3);
-        }
-
-        /* Список активных заявок */
-        .active-requests {
-            grid-column: span 2;
-            margin-top: 2rem;
-        }
-
-        .requests-list {
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
-        }
-
-        .request-item {
-            background: rgba(255, 255, 255, 0.02);
-            border-radius: 0.75rem;
-            padding: 1rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border: 1px solid rgba(255, 255, 255, 0.03);
-        }
-
-        .request-item.pending {
-            border-left: 3px solid #fbbf24;
-        }
-
-        .request-item.approved {
-            border-left: 3px solid #34d399;
-        }
-
-        .request-item.rejected {
-            border-left: 3px solid #ef4444;
-            opacity: 0.6;
-        }
-
-        .request-info h4 {
-            color: #f0f0f0;
-            margin-bottom: 0.25rem;
-        }
-
-        .request-meta {
-            font-size: 0.8rem;
-            color: #6b7280;
-            display: flex;
-            gap: 1rem;
-        }
-
-        .request-status {
-            font-size: 0.8rem;
-            padding: 0.25rem 0.75rem;
-            border-radius: 1rem;
-        }
-
-        .status-pending {
-            background: rgba(251, 191, 36, 0.1);
-            color: #fbbf24;
-        }
-
-        .status-approved {
-            background: rgba(52, 211, 153, 0.1);
-            color: #34d399;
-        }
-
-        .status-rejected {
-            background: rgba(239, 68, 68, 0.1);
-            color: #ef4444;
+            background: linear-gradient(135deg, #4f8df7, #3b72ec);
+            box-shadow: 0 5px 15px -5px #3b82f6;
         }
 
         /* Футер */
@@ -543,10 +597,14 @@
             }
             
             .form-group.full-width,
-            .request-section,
-            .active-requests,
+            .request-form-section,
+            .requests-list-section,
             .form-actions {
                 grid-column: span 1;
+            }
+
+            .request-fields-grid {
+                grid-template-columns: 1fr;
             }
             
             .edit-container {
@@ -647,20 +705,21 @@
                 <div class="detail-block">
                     <span class="detail-label">Категория</span>
                     <span class="detail-value kind">
-                            {% if thing.kind == "engine" %}🔧 Двигатель
-                            {% elif thing.kind == "transmission" %} ⚙️ Трансмиссия 
-                            {% elif thing.kind == "suspension" %} 🛞 Подвеска 
-                            {% elif thing.kind == "electrical" %} ⚡ Электрика 
-                            {% elif thing.kind == "body" %} 🚗 Кузов 
-                            {% else%} 📦 Другое {% endif %}
+                        {% if thing.kind == "engine" %}🔧 Двигатель
+                        {% elif thing.kind == "transmission" %} ⚙️ Трансмиссия 
+                        {% elif thing.kind == "suspension" %} 🛞 Подвеска 
+                        {% elif thing.kind == "electrical" %} ⚡ Электрика 
+                        {% elif thing.kind == "body" %} 🚗 Кузов 
+                        {% else%} 📦 Другое {% endif %}
                     </span>
                 </div>
             </div>
         </div>
 
-        <!-- Основная форма -->
+        <!-- Форма для администратора -->
+        {% if user and user.admin %}
         <div class="edit-form-container">
-            <form method="POST" action="/{% if user and user.admin %}admin{% else %}operator{% endif %}/edit/{{thing.id}}" id="editForm">
+            <form method="POST" action="/admin/edit/{{thing.id}}" id="editForm">
                 <div class="form-grid">
                     <!-- Поле ID (только для чтения) -->
                     <div class="form-group">
@@ -671,140 +730,47 @@
                     <!-- Наименование -->
                     <div class="form-group">
                         <label class="required"><i class="fas fa-tag"></i> Наименование</label>
-                        <input type="text" name="name" value="{{thing.name}}" 
-                               {% if not user or not user.admin %}data-requestable="true" data-field="name"{% endif %}
-                               {% if not user or not user.admin %}readonly class="readonly-field"{% endif %}
-                               required>
-                        {% if not user or not user.admin %}
-                            <span class="field-note"><i class="fas fa-info-circle"></i> Изменение через заявку</span>
-                        {% endif %}
+                        <input type="text" name="name" value="{{thing.name}}" required>
                     </div>
 
                     <!-- Индикаторный номер -->
                     <div class="form-group full-width">
                         <label><i class="fas fa-barcode"></i> Индикаторный номер</label>
-                        <input type="text" name="description" value="{{thing.description}}"
-                               {% if not user or not user.admin %}data-requestable="true" data-field="description"{% endif %}
-                               {% if not user or not user.admin %}readonly class="readonly-field"{% endif %}>
-                        {% if not user or not user.admin %}
-                            <span class="field-note"><i class="fas fa-info-circle"></i> Изменение через заявку</span>
-                        {% endif %}
+                        <input type="text" name="description" value="{{thing.description}}">
                     </div>
 
                     <!-- Количество -->
                     <div class="form-group">
                         <label class="required"><i class="fas fa-cubes"></i> Количество</label>
-                        <input type="number" name="amount" value="{{thing.amount}}" min="0" step="1"
-                               {% if not user or not user.admin %}data-requestable="true" data-field="amount"{% endif %}
-                               {% if not user or not user.admin %}readonly class="readonly-field"{% endif %}
-                               required>
+                        <input type="number" name="amount" value="{{thing.amount}}" min="0" step="1" required>
                     </div>
 
                     <!-- Цена закупки -->
                     <div class="form-group">
                         <label class="required"><i class="fas fa-ruble-sign"></i> Цена закупки</label>
-                        <input type="number" name="buy_cost" value="{{thing.buy_cost}}" min="0" step="0.01"
-                               {% if not user or not user.admin %}data-requestable="true" data-field="buy_cost"{% endif %}
-                               {% if not user or not user.admin %}readonly class="readonly-field"{% endif %}
-                               required>
+                        <input type="number" name="buy_cost" value="{{thing.buy_cost}}" min="0" step="0.01" required>
                     </div>
 
                     <!-- Категория -->
                     <div class="form-group">
                         <label class="required"><i class="fas fa-cog"></i> Категория</label>
-                        <select name="kind" {% if not user or not user.admin %}data-requestable="true" data-field="kind" disabled class="readonly-field"{% endif %} required>
-                            <option value="engine" {% if thing.kind == "engine" %} selected {% endif %}>🔧 Двигатель</option>
-                            <option value="transmission" {% if thing.kind == "transmission" %} selected {% endif %}>⚙️ Трансмиссия</option>
-                            <option value="suspension" {% if thing.kind == "suspension" %} selected {% endif %}>🛞 Подвеска</option>
-                            <option value="electrical" {% if thing.kind == "electrical" %} selected {% endif %}>⚡ Электрика</option>
-                            <option value="body" {% if thing.kind == "body" %} selected {% endif %}>🚗 Кузов</option>
-                            <option value="other" {% if thing.kind == "other" %} selected {% endif %}>📦 Другое</option>
+                        <select name="kind" required>
+                            <option value="engine" {% if thing.kind == "engine" %}selected{% endif %}>🔧 Двигатель</option>
+                            <option value="transmission" {% if thing.kind == "transmission" %}selected{% endif %}>⚙️ Трансмиссия</option>
+                            <option value="suspension" {% if thing.kind == "suspension" %}selected{% endif %}>🛞 Подвеска</option>
+                            <option value="electrical" {% if thing.kind == "electrical" %}selected{% endif %}>⚡ Электрика</option>
+                            <option value="body" {% if thing.kind == "body" %}selected{% endif %}>🚗 Кузов</option>
+                            <option value="other" {% if thing.kind == "other" %}selected{% endif %}>📦 Другое</option>
                         </select>
                     </div>
 
-
-                    <!-- СЕКЦИЯ ДЛЯ ОПЕРАТОРА: Система заявок -->
-                    {% if not user or not user.admin %}
-                    <div class="request-section">
-                        <h3>
-                            <i class="fas fa-paper-plane"></i>
-                            Создать заявку на изменение
-                        </h3>
-                        
-                        <div id="requestFields">
-                            <p style="color: #6b7280; text-align: center; padding: 1rem;">Нажмите на любое поле, чтобы добавить его в заявку</p>
-                        </div>
-
-                        <div class="request-priority" id="prioritySelector">
-                            <div class="priority-option selected" data-priority="medium">
-                                <div class="priority-medium">🟡 Средний</div>
-                            </div>
-                            <div class="priority-option" data-priority="high">
-                                <div class="priority-high">🔴 Высокий</div>
-                            </div>
-                            <div class="priority-option" data-priority="low">
-                                <div class="priority-low">🟢 Низкий</div>
-                            </div>
-                        </div>
-
-                        <div class="request-comment">
-                            <label><i class="fas fa-comment"></i> Комментарий к заявке</label>
-                            <textarea name="request_comment" placeholder="Опишите причину изменений...">Необходимо обновить информацию о детали</textarea>
-                        </div>
-
-                        <div style="margin-top: 1rem;">
-                            <button type="button" class="btn btn-request" onclick="createRequest()">
-                                <i class="fas fa-paper-plane"></i>
-                                Отправить заявку
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Активные заявки оператора -->
-                    <div class="active-requests">
-                        <h3 style="color: #f0f0f0; margin-bottom: 1rem;">
-                            <i class="fas fa-clipboard-list"></i>
-                            Мои активные заявки
-                        </h3>
-                        <div class="requests-list">
-                            <div class="request-item pending">
-                                <div class="request-info">
-                                    <h4>Изменение количества</h4>
-                                    <div class="request-meta">
-                                        <span>10 → 15</span>
-                                        <span>22.02.2026</span>
-                                    </div>
-                                </div>
-                                <span class="request-status status-pending">На рассмотрении</span>
-                            </div>
-                            <div class="request-item approved">
-                                <div class="request-info">
-                                    <h4>Обновление описания</h4>
-                                    <div class="request-meta">
-                                        <span>Добавлена информация о совместимости</span>
-                                        <span>21.02.2026</span>
-                                    </div>
-                                </div>
-                                <span class="request-status status-approved">Одобрено</span>
-                            </div>
-                        </div>
-                    </div>
-                    {% endif %}
-
                     <!-- Кнопки действий -->
                     <div class="form-actions">
-                        {% if user and user.admin %}
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-save"></i>
-                                Сохранить изменения
-                            </button>
-                        {% else %}
-                            <button type="button" class="btn btn-request" onclick="prepareRequest()">
-                                <i class="fas fa-paper-plane"></i>
-                                Создать заявку
-                            </button>
-                        {% endif %}
-                        <a href="/items" class="btn btn-secondary">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i>
+                            Сохранить изменения
+                        </button>
+                        <a href="/things" class="btn btn-secondary">
                             <i class="fas fa-times"></i>
                             Отмена
                         </a>
@@ -813,228 +779,355 @@
             </form>
         </div>
 
-        <!-- Футер 
-        <div class="page-footer">
-            <div>
-                <i class="fas fa-shield-alt" style="margin-right: 0.5rem; color: #34d399;"></i>
-                {% if user and user.admin %}
-                    Административный режим | Прямое редактирование
-                {% else %}
-                    Режим заявок | Ожидают: 2
-                {% endif %}
-            </div>
-            <div class="footer-links">
-                <a href="/dashboard"><i class="fas fa-tachometer-alt"></i> Дашборд</a>
-                <a href="/items"><i class="fas fa-list"></i> Список</a>
-                {% if not user or not user.admin %}
-                <a href="/requests"><i class="fas fa-paper-plane"></i> Мои заявки</a>
-                {% endif %}
-            </div>
-        </div>
-        -->
-    </div>
+        <!-- ДЛЯ ОПЕРАТОРА: форма создания заявки -->
+        {% else %}
+        <div class="edit-form-container">
+            <!-- ✅ ДОБАВЛЕНА ФОРМА С POST ЗАПРОСОМ -->
+            <form method="POST" action="/operator/edit/{{thing.id}}" id="operatorRequestForm">
+                <div class="form-grid">
+                    <!-- ✅ СКРЫТОЕ ПОЛЕ С ID ТОВАРА -->
+                    <input type="hidden" name="thing_id" value="{{thing.id}}">
+                    
+                    <!-- Поле ID (только для чтения - для отображения) -->
+                    <div class="form-group">
+                        <label><i class="fas fa-hashtag"></i> ID</label>
+                        <input type="text" value="{{thing.id}}" readonly disabled class="readonly-field">
+                    </div>
 
-    <script>
-        // Хранилище для полей заявки
-        let requestFields = [];
+                    <!-- Текущие значения (только для просмотра) -->
+                    <div class="form-group">
+                        <label><i class="fas fa-tag"></i> Текущее наименование</label>
+                        <input type="text" value="{{thing.name}}" readonly disabled class="readonly-field">
+                    </div>
 
-        // Определяем роль пользователя из контекста
-        const isAdmin = {% if user and user.admin %}true{% else %}false{% endif %};
+                    <div class="form-group full-width">
+                        <label><i class="fas fa-barcode"></i> Текущий индикаторный номер</label>
+                        <input type="text" value="{{thing.description}}" readonly disabled class="readonly-field">
+                    </div>
 
-        // Инициализация в зависимости от роли
-        document.addEventListener('DOMContentLoaded', function() {
-            if (isAdmin) {
-                console.log('Администратор: режим прямого редактирования');
-                
-                // Для админа - обычное подтверждение
-                document.getElementById('editForm').addEventListener('submit', function(e) {
-                    if (!confirm('Сохранить изменения для Коленчатого вала ГАЗ?')) {
-                        e.preventDefault();
-                    }
-                });
-            } else {
-                console.log('Оператор: режим заявок');
-                
-                // Для оператора - подготавливаем систему заявок
-                setupRequestSystem();
-            }
+                    <div class="form-group">
+                        <label><i class="fas fa-cubes"></i> Текущее количество</label>
+                        <input type="text" value="{{thing.amount}}" readonly disabled class="readonly-field">
+                    </div>
 
-            // Убрать сообщение о загрузке
-            document.getElementById('loadingFallback').style.display = 'none';
-        });
+                    <div class="form-group">
+                        <label><i class="fas fa-ruble-sign"></i> Текущая цена</label>
+                        <input type="text" value="{{thing.buy_cost}} ₽" readonly disabled class="readonly-field">
+                    </div>
 
-        // Настройка системы заявок для оператора
-        function setupRequestSystem() {
-            // Добавляем обработчики для клика по полям
-            document.querySelectorAll('[data-requestable="true"]').forEach(field => {
-                field.addEventListener('click', function() {
-                    addFieldToRequest(this);
-                });
-            });
+                    <div class="form-group">
+                        <label><i class="fas fa-cog"></i> Текущая категория</label>
+                        <input type="text" value="{% if thing.kind == 'engine' %}🔧 Двигатель{% elif thing.kind == 'transmission' %}⚙️ Трансмиссия{% elif thing.kind == 'suspension' %}🛞 Подвеска{% elif thing.kind == 'electrical' %}⚡ Электрика{% elif thing.kind == 'body' %}🚗 Кузов{% else %}📦 Другое{% endif %}" readonly disabled class="readonly-field">
+                    </div>
 
-            // Обработчик для приоритетов
-            document.querySelectorAll('.priority-option').forEach(opt => {
-                opt.addEventListener('click', function() {
-                    document.querySelectorAll('.priority-option').forEach(o => 
-                        o.classList.remove('selected'));
-                    this.classList.add('selected');
-                });
-            });
-        }
+                    <!-- Форма создания заявки -->
+                    <div class="request-form-section">
+                        <h3>
+                            <i class="fas fa-paper-plane"></i>
+                            Создать заявку на изменение
+                        </h3>
+                        
+                        <div class="request-fields-grid">
+                            <!-- Наименование -->
+                            <div class="request-field-group">
+                                <label><i class="fas fa-tag"></i> Новое наименование</label>
+                                <!-- ✅ ДОБАВЛЕН АТРИБУТ name -->
+                                <input type="text" name="new_name" id="request_name" value="{{thing.name}}" placeholder="Введите новое название">
+                                <div class="current-value-badge">
+                                    <i class="fas fa-info-circle"></i> Текущее: {{thing.name}}
+                                </div>
+                            </div>
 
-        // Добавление поля в заявку
-        function addFieldToRequest(field) {
-            const fieldName = field.dataset.field;
-            const fieldLabel = {
-                'name': 'Наименование',
-                'description': 'Индикаторный номер',
-                'amount': 'Количество',
-                'buy_cost': 'Цена закупки',
-                'kind': 'Категория',
-                'manufacturer': 'Производитель',
-                'compatible_engines': 'Совместимые двигатели'
-            }[fieldName] || fieldName;
+                            <!-- Индикаторный номер -->
+                            <div class="request-field-group full-width">
+                                <label><i class="fas fa-barcode"></i> Новый индикаторный номер</label>
+                                <!-- ✅ ДОБАВЛЕН АТРИБУТ name -->
+                                <input type="text" name="new_description" id="request_description" value="{{thing.description}}" placeholder="Введите новый номер">
+                                <div class="current-value-badge">
+                                    <i class="fas fa-info-circle"></i> Текущее: {{thing.description}}
+                                </div>
+                            </div>
 
-            const currentValue = field.value;
+                            <!-- Количество -->
+                            <div class="request-field-group">
+                                <label><i class="fas fa-cubes"></i> Новое количество</label>
+                                <!-- ✅ ДОБАВЛЕН АТРИБУТ name -->
+                                <input type="number" name="new_amount" id="request_amount" value="{{thing.amount}}" min="0" step="1" placeholder="Новое количество">
+                                <div class="current-value-badge">
+                                    <i class="fas fa-info-circle"></i> Текущее: {{thing.amount}}
+                                </div>
+                            </div>
 
-            // Проверяем, не добавлено ли уже это поле
-            if (requestFields.some(f => f.field === fieldName)) {
-                alert('Это поле уже добавлено в заявку');
-                return;
-            }
+                            <!-- Цена -->
+                            <div class="request-field-group">
+                                <label><i class="fas fa-ruble-sign"></i> Новая цена</label>
+                                <!-- ✅ ДОБАВЛЕН АТРИБУТ name -->
+                                <input type="number" name="new_buy_cost" id="request_buy_cost" value="{{thing.buy_cost}}" min="0" step="0.01" placeholder="Новая цена">
+                                <div class="current-value-badge">
+                                    <i class="fas fa-info-circle"></i> Текущее: {{thing.buy_cost}} ₽
+                                </div>
+                            </div>
 
-            // Добавляем поле в список
-            requestFields.push({
-                field: fieldName,
-                label: fieldLabel,
-                currentValue: currentValue,
-                newValue: currentValue
-            });
-
-            // Отображаем поле в секции заявки
-            renderRequestFields();
-        }
-
-        // Отображение полей заявки
-        function renderRequestFields() {
-            const container = document.getElementById('requestFields');
-            if (!container) return;
-
-            if (requestFields.length === 0) {
-                container.innerHTML = '<p style="color: #6b7280; text-align: center; padding: 1rem;">Нажмите на любое поле, чтобы добавить его в заявку</p>';
-                return;
-            }
-
-            let html = '';
-            requestFields.forEach((rf, index) => {
-                html += `
-                    <div class="request-field" data-index="${index}">
-                        <div class="request-field-header">
-                            <span class="request-field-name">${rf.label}</span>
-                            <span class="request-current-value">Текущее: ${rf.currentValue}</span>
+                            <!-- Категория -->
+                            <div class="request-field-group">
+                                <label><i class="fas fa-cog"></i> Новая категория</label>
+                                <!-- ✅ ДОБАВЛЕН АТРИБУТ name -->
+                                <select name="new_kind" id="request_kind">
+                                    <option value="engine" {% if thing.kind == "engine" %}selected{% endif %}>🔧 Двигатель</option>
+                                    <option value="transmission" {% if thing.kind == "transmission" %}selected{% endif %}>⚙️ Трансмиссия</option>
+                                    <option value="suspension" {% if thing.kind == "suspension" %}selected{% endif %}>🛞 Подвеска</option>
+                                    <option value="electrical" {% if thing.kind == "electrical" %}selected{% endif %}>⚡ Электрика</option>
+                                    <option value="body" {% if thing.kind == "body" %}selected{% endif %}>🚗 Кузов</option>
+                                    <option value="other" {% if thing.kind == "other" %}selected{% endif %}>📦 Другое</option>
+                                </select>
+                                <div class="current-value-badge">
+                                    <i class="fas fa-info-circle"></i> Текущее: 
+                                    {% if thing.kind == "engine" %}🔧 Двигатель
+                                    {% elif thing.kind == "transmission" %}⚙️ Трансмиссия
+                                    {% elif thing.kind == "suspension" %}🛞 Подвеска
+                                    {% elif thing.kind == "electrical" %}⚡ Электрика
+                                    {% elif thing.kind == "body" %}🚗 Кузов
+                                    {% else %}📦 Другое{% endif %}
+                                </div>
+                            </div>
                         </div>
-                        <div class="request-input">
-                            <input type="text" 
-                                   value="${rf.currentValue}" 
-                                   onchange="updateRequestField(${index}, this.value)"
-                                   placeholder="Новое значение">
-                            <button type="button" class="btn btn-secondary" onclick="removeRequestField(${index})" style="flex: 0 0 auto; padding: 0.7rem;">
-                                <i class="fas fa-times"></i>
+
+                        <div class="request-priority" id="prioritySelector">
+                        <div class="priority-option" data-priority="низкий">
+                            <div class="priority-low">🟢 Низкий</div>
+                        </div>
+                        <div class="priority-option selected" data-priority="средний">
+                            <div class="priority-medium">🟡 Средний</div>
+                        </div>
+                        <div class="priority-option" data-priority="высокий">
+                            <div class="priority-high">🔴 Высокий</div>
+                        </div>
+                    </div>
+                    <!-- Скрытое поле для приоритета -->
+                    <input type="hidden" name="priority" id="priority_field" value="средний">
+
+
+                        <!-- Комментарий -->
+                        <div class="request-comment">
+                            <label><i class="fas fa-comment"></i> Комментарий к заявке</label>
+                            <!-- ✅ ДОБАВЛЕН АТРИБУТ name -->
+                            <textarea name="comment" id="request_comment" placeholder="Опишите причину изменений..."></textarea>
+                        </div>
+
+                        <!-- Кнопка отправки - ТЕПЕРЬ type="submit" -->
+                        <div style="margin-top: 1.5rem;">
+                            <button type="submit" class="btn btn-request" style="width: 100%;">
+                                <i class="fas fa-paper-plane"></i>
+                                Отправить заявку на рассмотрение
                             </button>
                         </div>
                     </div>
-                `;
-            });
 
-            container.innerHTML = html;
-        }
-
-        // Обновление значения поля в заявке
-        function updateRequestField(index, newValue) {
-            if (requestFields[index]) {
-                requestFields[index].newValue = newValue;
-            }
-        }
-
-        // Удаление поля из заявки
-        function removeRequestField(index) {
-            requestFields.splice(index, 1);
-            renderRequestFields();
-        }
-
-        // Подготовка заявки
-        function prepareRequest() {
-            if (requestFields.length === 0) {
-                alert('Добавьте поля для изменения в заявку');
-                return;
-            }
-
-            // Показываем секцию заявки
-            document.querySelector('.request-section').scrollIntoView({ 
-                behavior: 'smooth' 
-            });
-        }
-
-        // Создание заявки
-        function createRequest() {
-            if (requestFields.length === 0) {
-                alert('Добавьте хотя бы одно поле для изменения');
-                return;
-            }
-
-            const priority = document.querySelector('.priority-option.selected')?.dataset.priority || 'medium';
-            const comment = document.querySelector('textarea[name="request_comment"]')?.value || '';
-
-            // Здесь будет отправка заявки на сервер
-            console.log('Создание заявки:', {
-                item_id: 1,
-                fields: requestFields,
-                priority: priority,
-                comment: comment
-            });
-
-            // Имитация успешной отправки
-            alert('✅ Заявка отправлена на рассмотрение администратору');
-            
-            // Очищаем форму
-            requestFields = [];
-            renderRequestFields();
-            document.querySelector('textarea[name="request_comment"]').value = '';
-
-            // Добавляем заявку в список активных (демо)
-            addDemoRequest();
-        }
-
-        // Добавление демо-заявки в список
-        function addDemoRequest() {
-            const requestsList = document.querySelector('.requests-list');
-            if (!requestsList) return;
-
-            const newRequest = document.createElement('div');
-            newRequest.className = 'request-item pending';
-            newRequest.innerHTML = `
-                <div class="request-info">
-                    <h4>Новая заявка (${new Date().toLocaleTimeString()})</h4>
-                    <div class="request-meta">
-                        <span>${requestFields.length} поле(й)</span>
-                        <span>${new Date().toLocaleDateString()}</span>
+                    <!-- Кнопка отмены (НЕ В ФОРМЕ) -->
+                    <div class="form-actions">
+                        <a href="/things" class="btn btn-secondary">
+                            <i class="fas fa-times"></i>
+                            Вернуться к списку
+                        </a>
                     </div>
                 </div>
-                <span class="request-status status-pending">На рассмотрении</span>
-            `;
+            </form>
+        </div>
+        {% endif %}
+    </div>
 
-            requestsList.insertBefore(newRequest, requestsList.firstChild);
+    <script>
+    // Добавьте этот код в существующий скрипт
+    document.addEventListener('DOMContentLoaded', function() {
+        // Инициализация выбора приоритета
+        initPrioritySelector();
+    });
+
+    function initPrioritySelector() {
+        const priorityOptions = document.querySelectorAll('.priority-option');
+        const priorityField = document.getElementById('priority_field');
+        
+        priorityOptions.forEach(option => {
+            option.addEventListener('click', function() {
+                // Убираем выделение у всех опций
+                priorityOptions.forEach(opt => opt.classList.remove('selected'));
+                // Выделяем выбранную опцию
+                this.classList.add('selected');
+                // Обновляем значение скрытого поля
+                priorityField.value = this.dataset.priority;
+            });
+        });
+    }
+
+    // Обновите функцию createRequest (если она еще используется)
+    function createRequest() {
+        // Собираем данные из формы
+        const requestData = {
+            item_id: {{thing.id}},
+            item_name: "{{thing.name}}",
+            fields: {
+                name: document.getElementById('request_name')?.value,
+                description: document.getElementById('request_description')?.value,
+                amount: document.getElementById('request_amount')?.value,
+                buy_cost: document.getElementById('request_buy_cost')?.value,
+                kind: document.getElementById('request_kind')?.value
+            },
+            priority: document.getElementById('priority_field').value, // Берем значение из скрытого поля
+            comment: document.getElementById('request_comment')?.value || '',
+            created_at: new Date().toISOString(),
+            status: 'pending'
+        };
+
+        // Проверяем, есть ли изменения
+        const hasChanges = 
+            requestData.fields.name !== "{{thing.name}}" ||
+            requestData.fields.description !== "{{thing.description}}" ||
+            requestData.fields.amount != {{thing.amount}} ||
+            requestData.fields.buy_cost != {{thing.buy_cost}} ||
+            requestData.fields.kind !== "{{thing.kind}}";
+
+        if (!hasChanges) {
+            alert('❌ Нет изменений для создания заявки');
+            return;
         }
 
-        // Для демонстрации - предустановленные заявки
-        window.demoRequests = [
-            {
-                field: 'amount',
-                label: 'Количество',
-                currentValue: '10',
-                newValue: '15'
+        // Получаем существующие заявки
+        let requests = JSON.parse(localStorage.getItem('requests') || '[]');
+        
+        // Добавляем новую заявку
+        requestData.id = Date.now();
+        requests.push(requestData);
+        
+        // Сохраняем
+        localStorage.setItem('requests', JSON.stringify(requests));
+
+        // Показываем успех
+        alert('✅ Заявка отправлена на рассмотрение');
+
+        // Обновляем список
+        loadRequests();
+    }
+
+    // Обновите функцию loadRequests для отображения русских значений
+    function loadRequests() {
+        const requestsList = document.getElementById('requestsList');
+        if (!requestsList) return;
+
+        const requests = JSON.parse(localStorage.getItem('requests') || '[]');
+        
+        // Фильтруем заявки для этого товара
+        const itemRequests = requests.filter(r => r.item_id === {{thing.id}});
+
+        if (itemRequests.length === 0) {
+            requestsList.innerHTML = `
+                <div style="grid-column: 1/-1; text-align: center; padding: 2rem; color: #6b7280;">
+                    <i class="fas fa-inbox fa-2x" style="margin-bottom: 1rem; opacity: 0.3;"></i>
+                    <p>Нет заявок на этот товар</p>
+                </div>
+            `;
+            return;
+        }
+
+        // Сортируем по дате (новые сверху)
+        itemRequests.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+
+        let html = '';
+        itemRequests.forEach(request => {
+            const date = new Date(request.created_at).toLocaleString('ru-RU', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+
+            const priorityEmoji = {
+                'низкий': '🟢',
+                'средний': '🟡',
+                'высокий': '🔴'
+            }[request.priority] || '🟡';
+
+            const priorityText = {
+                'Низкий': 'Низкий',
+                'Средний': 'Средний',
+                'Высокий': 'Высокий'
+            }[request.priority] || 'Средний';
+
+            const statusText = {
+                'pending': 'На рассмотрении',
+                'approved': 'Одобрено',
+                'rejected': 'Отклонено'
+            }[request.status] || 'На рассмотрении';
+
+            // Собираем изменения
+            let changes = '';
+            if (request.fields.name !== "{{thing.name}}") {
+                changes += `<div class="change-item"><span class="change-field">Название:</span> <span class="change-value">${request.fields.name}</span></div>`;
             }
-        ];
+            if (request.fields.description !== "{{thing.description}}") {
+                changes += `<div class="change-item"><span class="change-field">Номер:</span> <span class="change-value">${request.fields.description}</span></div>`;
+            }
+            if (request.fields.amount != {{thing.amount}}) {
+                changes += `<div class="change-item"><span class="change-field">Количество:</span> <span class="change-value">${request.fields.amount}</span></div>`;
+            }
+            if (request.fields.buy_cost != {{thing.buy_cost}}) {
+                changes += `<div class="change-item"><span class="change-field">Цена:</span> <span class="change-value">${request.fields.buy_cost} ₽</span></div>`;
+            }
+            if (request.fields.kind !== "{{thing.kind}}") {
+                const kindNames = {
+                    'engine': '🔧 Двигатель',
+                    'transmission': '⚙️ Трансмиссия',
+                    'suspension': '🛞 Подвеска',
+                    'electrical': '⚡ Электрика',
+                    'body': '🚗 Кузов',
+                    'other': '📦 Другое'
+                };
+                changes += `<div class="change-item"><span class="change-field">Категория:</span> <span class="change-value">${kindNames[request.fields.kind] || request.fields.kind}</span></div>`;
+            }
+
+            html += `
+                <div class="request-card ${request.status}">
+                    <div class="request-header">
+                        <span class="request-priority-badge">${priorityEmoji} ${priorityText}</span>
+                        <span class="request-date">${date}</span>
+                    </div>
+                    <div class="request-changes">
+                        ${changes}
+                    </div>
+                    ${request.comment ? `<div class="request-comment-text"><i class="fas fa-quote-right" style="opacity: 0.5;"></i> ${request.comment}</div>` : ''}
+                    <div style="margin-top: 0.75rem; display: flex; justify-content: space-between; align-items: center;">
+                        <span class="request-status status-${request.status}">${statusText}</span>
+                        ${request.status === 'pending' ? 
+                            `<button class="btn btn-secondary" onclick="cancelRequest(${request.id})" style="padding: 0.25rem 0.75rem; font-size: 0.75rem;">
+                                <i class="fas fa-times"></i> Отменить
+                            </button>` : ''}
+                    </div>
+                </div>
+            `;
+        });
+
+        requestsList.innerHTML = html;
+    }
+
+    // Обновите функцию clearRequestForm
+    function clearRequestForm() {
+        document.getElementById('request_name').value = "{{thing.name}}";
+        document.getElementById('request_description').value = "{{thing.description}}";
+        document.getElementById('request_amount').value = {{thing.amount}};
+        document.getElementById('request_buy_cost').value = {{thing.buy_cost}};
+        document.getElementById('request_kind').value = "{{thing.kind}}";
+        document.getElementById('request_comment').value = '';
+        
+        // Сброс приоритета на средний
+        document.querySelectorAll('.priority-option').forEach(opt => {
+            opt.classList.remove('selected');
+            if (opt.dataset.priority === 'средний') {
+                opt.classList.add('selected');
+            }
+        });
+        document.getElementById('priority_field').value = 'средний';
+    }
     </script>
+
 </body>
 </html>

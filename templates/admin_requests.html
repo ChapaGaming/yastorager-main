@@ -481,19 +481,19 @@
             font-weight: 500;
         }
 
-        .status-pending {
+        .status-На рассмотрении {
             background: rgba(245, 158, 11, 0.1);
             color: #f59e0b;
             border: 1px solid rgba(245, 158, 11, 0.3);
         }
 
-        .status-approved {
+        .status-Одобрено {
             background: rgba(16, 185, 129, 0.1);
             color: #10b981;
             border: 1px solid rgba(16, 185, 129, 0.3);
         }
 
-        .status-rejected {
+        .status-Отклонено {
             background: rgba(239, 68, 68, 0.1);
             color: #ef4444;
             border: 1px solid rgba(239, 68, 68, 0.3);
@@ -567,15 +567,29 @@
             border-bottom: 1px solid var(--border-color);
         }
 
-        /* Стили для измененных строк */
+        .new-value {
+            color: var(--primary-color);
+            font-weight: 500;
+        }
+
+        /* ========== ПОДСВЕТКА ИЗМЕНЕНИЙ ========== */
         .changed-row {
             background: rgba(167, 139, 250, 0.15) !important;
             border-left: 3px solid var(--primary-color);
         }
 
-        .new-value {
-            color: var(--primary-color);
+        .current-value.changed {
+            color: var(--primary-color) !important;
             font-weight: 500;
+            position: relative;
+        }
+
+        .current-value.changed::before {
+            content: '←';
+            color: var(--primary-color);
+            margin-right: 8px;
+            font-weight: bold;
+            opacity: 0.8;
         }
 
         .new-value.changed {
@@ -584,10 +598,10 @@
             position: relative;
         }
 
-        .new-value.changed::before {
+        .new-value.changed::after {
             content: '→';
             color: var(--primary-color);
-            margin-right: 8px;
+            margin-left: 8px;
             font-weight: bold;
             opacity: 0.8;
         }
@@ -874,11 +888,7 @@
                                         {% if promise.priority == "Высокий" %}🔴{% elif promise.priority == "Средний" %}🟡{% else %}🟢{% endif %}
                                         {{ promise.priority }}
                                     </span>
-                                    <span class="status-badge 
-                                        {% if promise.status == "На рассмотрении" %}status-pending
-                                        {% elif promise.status == "Одобрено" %}status-approved
-                                        {% elif promise.status == "Отклонено" %}status-rejected
-                                        {% endif %}">
+                                    <span class="status-badge status-{{ promise.status }}">
                                         {% if promise.status == "На рассмотрении" %}⏳ На рассмотрении
                                         {% elif promise.status == "Одобрено" %}✅ Одобрено
                                         {% elif promise.status == "Отклонено" %}❌ Отклонено
@@ -908,51 +918,57 @@
                                     {% endif %}
                                 </div>
 
-                                <!-- ✅ НОВЫЙ БЛОК ИЗМЕНЕНИЙ (работает для всех статусов) -->
                                 <div class="request-changes">
                                     <h4>Предлагаемые изменения:</h4>
                                     <table class="changes-table">
                                         <tr>
                                             <th>Поле</th>
+                                            <th>Текущее значение</th>
                                             <th>Новое значение</th>
                                         </tr>
-                                        
-                                        <!-- Наименование -->
-                                        {% if promise.new_name %}
+                                        {% if promise.new_name and promise.new_name != thing.name %}
                                         <tr class="changed-row">
                                             <td>Наименование</td>
+                                            <td class="current-value changed">{{ thing.name }}</td>
                                             <td class="new-value changed">{{ promise.new_name }}</td>
                                         </tr>
                                         {% endif %}
                                         
-                                        <!-- Индикаторный номер -->
-                                        {% if promise.new_description %}
+                                        {% if promise.new_description and promise.new_description != thing.description %}
                                         <tr class="changed-row">
                                             <td>Индикаторный номер</td>
+                                            <td class="current-value changed">{{ thing.description }}</td>
                                             <td class="new-value changed">{{ promise.new_description }}</td>
                                         </tr>
                                         {% endif %}
                                         
-                                        <!-- Количество -->
-                                        {% if promise.new_amount is not none %}
+                                        {% if promise.new_amount and promise.new_amount != thing.amount %}
                                         <tr class="changed-row">
                                             <td>Количество</td>
+                                            <td class="current-value changed">{{ thing.amount }}</td>
                                             <td class="new-value changed">{{ promise.new_amount }}</td>
                                         </tr>
                                         {% endif %}
                                         
-                                        <!-- Цена -->
-                                        {% if promise.new_buy_cost is not none %}
+                                        {% if promise.new_buy_cost and promise.new_buy_cost != thing.buy_cost %}
                                         <tr class="changed-row">
                                             <td>Цена закупки</td>
+                                            <td class="current-value changed">{{ thing.buy_cost }} ₽</td>
                                             <td class="new-value changed">{{ promise.new_buy_cost }} ₽</td>
                                         </tr>
                                         {% endif %}
                                         
-                                        <!-- Категория -->
-                                        {% if promise.new_kind %}
+                                        {% if promise.new_kind and promise.new_kind != thing.kind %}
                                         <tr class="changed-row">
                                             <td>Категория</td>
+                                            <td class="current-value changed">
+                                                {% if thing.kind == "engine" %}🔧 Двигатель
+                                                {% elif thing.kind == "transmission" %}⚙️ Трансмиссия
+                                                {% elif thing.kind == "suspension" %}🛞 Подвеска
+                                                {% elif thing.kind == "electrical" %}⚡ Электрика
+                                                {% elif thing.kind == "body" %}🚗 Кузов
+                                                {% else %}📦 Другое{% endif %}
+                                            </td>
                                             <td class="new-value changed">
                                                 {% if promise.new_kind == "engine" %}🔧 Двигатель
                                                 {% elif promise.new_kind == "transmission" %}⚙️ Трансмиссия
@@ -963,15 +979,6 @@
                                             </td>
                                         </tr>
                                         {% endif %}
-                                        
-                                        <!-- Если нет изменений -->
-                                        {% if not promise.new_name and not promise.new_description and promise.new_amount is none and promise.new_buy_cost is none and not promise.new_kind %}
-                                        <tr>
-                                            <td colspan="2" style="text-align: center; color: var(--text-secondary); padding: 20px;">
-                                                <i class="fas fa-info-circle"></i> Нет изменений
-                                            </td>
-                                        </tr>
-                                        {% endif %}
                                     </table>
                                 </div>
                             </div>
@@ -979,11 +986,12 @@
                             {% if promise.status == "На рассмотрении" %}
                             <div class="request-actions">
                                 <form method="POST" action="/admin/requests/{{ promise.id }}/approve" style="display: inline;">
-                                    <input type="hidden" name="new_name" value="{{ promise.new_name or '' }}">
-                                    <input type="hidden" name="new_description" value="{{ promise.new_description or '' }}">
-                                    <input type="hidden" name="new_amount" value="{{ promise.new_amount or '' }}">
-                                    <input type="hidden" name="new_buy_cost" value="{{ promise.new_buy_cost or '' }}">
-                                    <input type="hidden" name="new_kind" value="{{ promise.new_kind or '' }}">
+                                    {%if promise.new_name%}<input type="hidden" name = "new_name" value = "{{promise.new_name}}">{% else %}<input type="hidden" name = "new_name">{%endif%}
+                                    {%if promise.new_description%}<input type="hidden" name = "new_description" value = "{{promise.new_description}}">{% else %}<input type="hidden" name = "new_description">{%endif%}
+                                    {%if promise.new_amount%}<input type="hidden" name = "new_amount" value = "{{promise.new_amount}}">{% else %}<input type="hidden" name = "new_amount">{%endif%}
+                                    {%if promise.new_buy_cost%}<input type="hidden" name = "new_buy_cost" value = "{{promise.new_buy_cost}}">{% else %}<input type="hidden" name = "new_buy_cost">{%endif%}
+                                    {%if promise.new_kind%}<input type="hidden" name = "new_kind" value = "{{promise.new_kind}}">{% else %}<input type="hidden" name = "new_kind">{%endif%}
+
                                     <button type="submit" class="btn btn-success" onclick="return confirm('Подтвердить изменения?')">
                                         <i class="fas fa-check"></i> Одобрить
                                     </button>

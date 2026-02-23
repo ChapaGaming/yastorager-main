@@ -70,6 +70,8 @@ class Promises(SQLModel, table=True):
     owner: Optional["Users"] = Relationship(back_populates="promises")
     thing: Optional["Things"] = Relationship(back_populates="requests")
 
+    old_thing: Optional["Things"]
+
 # Утилиты
 def hashing(text):
     return hashlib.sha256(text.encode()).hexdigest()
@@ -426,13 +428,13 @@ async def login(request: Request, session: SessionDep,
 @app.post("/operator/edit/{id}")  # ← ДОБАВИЛИ name="login_user"
 async def login(request: Request, session: SessionDep,
                 id: int,
-                new_name: str = Form(...),
-                new_description: str = Form(...),
-                new_amount: int = Form(...),
-                new_buy_cost: float = Form(...),
-                new_kind: str = Form(...),
-                priority: str = Form(...),
-                comment: str = Form(...)
+                new_name: str|None = Form(...),
+                new_description: str|None = Form(...),
+                new_amount: int|None = Form(...),
+                new_buy_cost: float|None = Form(...),
+                new_kind: str|None = Form(...),
+                priority: str|None = Form(...),
+                comment: str|None = Form(...)
                 ):
     
     auth_data = await authenticate_user(request, "-1")
@@ -545,11 +547,11 @@ async def decline(request: Request, session: SessionDep,id: int,):
 @app.post("/admin/requests/{id}/approve")   #принятие
 async def claim(request: Request, session: SessionDep,
                 id: int,
-                new_name: str = Form(...),
-                new_description: str = Form(...),
-                new_amount: int = Form(...),
-                new_buy_cost: float = Form(...),
-                new_kind: str = Form(...)):
+                new_name: str|None = Form(...),
+                new_description: str|None = Form(...),
+                new_amount: int|None = Form(...),
+                new_buy_cost: float|None = Form(...),
+                new_kind: str|None = Form(...)):
     
     auth_data = await authenticate_user(request, "-1")
     
