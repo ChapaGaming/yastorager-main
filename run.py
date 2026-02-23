@@ -9,16 +9,46 @@ from sqlalchemy.orm import sessionmaker, selectinload
 from typing import Optional, Annotated, List
 from fastapi.middleware.cors import CORSMiddleware
 from datetime import datetime,time,timedelta,date
+import os
 import hashlib
 import jwt
 import asyncio
 from dotenv import load_dotenv, dotenv_values
 
+# Определяем окружение
+IS_PRODUCTION = os.getenv("RENDER", False)
+
 load_dotenv()
 config = dotenv_values(".env")
-print(config)
+
+# Для Render используем переменные окружения напрямую
+if IS_PRODUCTION:
+    config = {
+        "DATABASE_URL": os.getenv("DATABASE_URL"),
+        "SECRET_KEY": os.getenv("SECRET_KEY"),
+        "JWT_CODER": os.getenv("JWT_CODER", "HS256"),
+        "REGISTER_KEY": os.getenv("REGISTER_KEY")
+    }
+
+print(f"🚀 Запуск в {'production' if IS_PRODUCTION else 'development'} режиме")
+print(f"📦 База данных: {config['DATABASE_URL']}")
+
 # Настройка базы данных
-engine = create_async_engine(config["DATABASE_URL"], echo=True, connect_args={"check_same_thread": False})
+database_url = config["DATABASE_URL"]
+
+# Разные параметры для разных БД
+connect_args = {}
+if database_url.startswith("sqlite"):
+    connect_args = {"check_same_thread": False}
+    print("✅ Используется SQLite")
+else:
+    print(f"✅ Используется {database_url.split('+')[0].split(':')[0]}")
+
+engine = create_async_engine(
+    database_url, 
+    echo=not IS_PRODUCTION,  # Отключаем echo в production
+    connect_args=connect_args
+)
 AsyncSessionLocal = sessionmaker(bind=engine, class_=AsyncSession, expire_on_commit=False)
 
 # Модель пользователя
@@ -87,18 +117,25 @@ async def lifespan(app: FastAPI):
     print("🚀 Приложение запускается...")
     async with engine.begin() as conn:
         await conn.run_sync(SQLModel.metadata.create_all)
-    print("Users attributes:", [attr for attr in dir(Users) if not attr.startswith('_')])
-    print("Things attributes:", [attr for attr in dir(Things) if not attr.startswith('_')])
-    print("Promises attributes:", [attr for attr in dir(Promises) if not attr.startswith('_')])
+    print("✅ База данных готова")
     yield
     print("🛑 Приложение останавливается...")
     await engine.dispose()
 
 app = FastAPI(lifespan=lifespan)
-last = 0
+
+# CORS - динамический список origins
+origins = [
+    "http://localhost:8000",
+    "http://127.0.0.1:8000",
+]
+if IS_PRODUCTION:
+    # Добавь свой Render URL
+    origins.append("https://gaz-storage.onrender.com/")
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:8000", "http://127.0.0.1:8000"],
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"]
@@ -119,9 +156,7 @@ SessionDep = Annotated[AsyncSession, Depends(get_session)]
 
 def create_tokens(response: Response, data: dict, save = True) -> Response:
     try:
-
-
-       # Refresh Token (30 дней)
+        # Refresh Token (30 дней)
         refresh_data = data.copy()
         refresh_data["exp"] = int((datetime.now() + timedelta(days=30)).timestamp())
         refresh_token = jwt.encode(refresh_data, config["SECRET_KEY"], algorithm=config["JWT_CODER"])
@@ -132,26 +167,18 @@ def create_tokens(response: Response, data: dict, save = True) -> Response:
         access_token = jwt.encode(access_data, config["SECRET_KEY"], algorithm=config["JWT_CODER"])
 
         # Устанавливаем куки
-        if save:
-            response.set_cookie(
-                key="refresh",
-                value=str(refresh_token),
-                max_age=30*24*60*60,
-                httponly=True,
-                secure=False,
-                samesite="lax",
-                path="/"
-            )
+        cookie_params = {
+            "max_age": 30*24*60*60 if save else 15*60,
+            "httponly": True,
+            "secure": IS_PRODUCTION,  # True в production
+            "samesite": "lax",
+            "path": "/"
+        }
         
-        response.set_cookie(
-            key="access",
-            value=str(access_token),
-            max_age=15*60,
-            httponly=True,
-            secure=False,
-            samesite="lax",
-            path="/"
-        )
+        if save:
+            response.set_cookie(key="refresh", value=str(refresh_token), **cookie_params)
+        
+        response.set_cookie(key="access", value=str(access_token), **cookie_params)
         
         print("✅ Auth куки успешно установлены!")
         return response
@@ -682,4 +709,10 @@ async def logout(response: Response):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="127.0.0.1", port=8000)
+    
+    # Настройки для Render
+    port = int(os.getenv("PORT", 8000))
+    host = "0.0.0.0" if IS_PRODUCTION else "127.0.0.1"
+    
+    print(f"🌐 Сервер запускается на {host}:{port}")
+    uvicorn.run(app, host=host, port=port)
