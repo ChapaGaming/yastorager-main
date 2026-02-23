@@ -902,7 +902,7 @@
                                     <div class="info-row">
                                         <i class="fas fa-box"></i>
                                         <strong>Товар:</strong> 
-                                        <a href="/edit/{{ thing.id }}">{{ thing.name }} (ID: {{ thing.id }})</a>
+                                        <a href="/edit/{{ thing.id }}">{{ promise.old_name }} (ID: {{ thing.id }})</a>
                                     </div>
                                     <div class="info-row">
                                         <i class="fas fa-user"></i>
@@ -926,47 +926,47 @@
                                             <th>Текущее значение</th>
                                             <th>Новое значение</th>
                                         </tr>
-                                        {% if promise.new_name and promise.new_name != thing.name %}
+                                        {% if promise.new_name and promise.new_name != promise.old_name %}
                                         <tr class="changed-row">
                                             <td>Наименование</td>
-                                            <td class="current-value changed">{{ thing.name }}</td>
+                                            <td class="current-value changed">{{ promise.old_name }}</td>
                                             <td class="new-value changed">{{ promise.new_name }}</td>
                                         </tr>
                                         {% endif %}
                                         
-                                        {% if promise.new_description and promise.new_description != thing.description %}
+                                        {% if promise.new_description and promise.new_description != promise.old_description %}
                                         <tr class="changed-row">
                                             <td>Индикаторный номер</td>
-                                            <td class="current-value changed">{{ thing.description }}</td>
+                                            <td class="current-value changed">{{ promise.old_description }}</td>
                                             <td class="new-value changed">{{ promise.new_description }}</td>
                                         </tr>
                                         {% endif %}
                                         
-                                        {% if promise.new_amount and promise.new_amount != thing.amount %}
+                                        {% if promise.new_amount and promise.new_amount != promise.old_amount %}
                                         <tr class="changed-row">
                                             <td>Количество</td>
-                                            <td class="current-value changed">{{ thing.amount }}</td>
+                                            <td class="current-value changed">{{ promise.old_amount }}</td>
                                             <td class="new-value changed">{{ promise.new_amount }}</td>
                                         </tr>
                                         {% endif %}
                                         
-                                        {% if promise.new_buy_cost and promise.new_buy_cost != thing.buy_cost %}
+                                        {% if promise.new_buy_cost and promise.new_buy_cost != promise.old_buy_cost %}
                                         <tr class="changed-row">
                                             <td>Цена закупки</td>
-                                            <td class="current-value changed">{{ thing.buy_cost }} ₽</td>
+                                            <td class="current-value changed">{{ promise.old_buy_cost }} ₽</td>
                                             <td class="new-value changed">{{ promise.new_buy_cost }} ₽</td>
                                         </tr>
                                         {% endif %}
                                         
-                                        {% if promise.new_kind and promise.new_kind != thing.kind %}
+                                        {% if promise.new_kind and promise.new_kind != promise.old_kind %}
                                         <tr class="changed-row">
                                             <td>Категория</td>
                                             <td class="current-value changed">
-                                                {% if thing.kind == "engine" %}🔧 Двигатель
-                                                {% elif thing.kind == "transmission" %}⚙️ Трансмиссия
-                                                {% elif thing.kind == "suspension" %}🛞 Подвеска
-                                                {% elif thing.kind == "electrical" %}⚡ Электрика
-                                                {% elif thing.kind == "body" %}🚗 Кузов
+                                                {% if promise.old_kind == "engine" %}🔧 Двигатель
+                                                {% elif promise.old_kind == "transmission" %}⚙️ Трансмиссия
+                                                {% elif promise.old_kind == "suspension" %}🛞 Подвеска
+                                                {% elif promise.old_kind == "electrical" %}⚡ Электрика
+                                                {% elif promise.old_kind == "body" %}🚗 Кузов
                                                 {% else %}📦 Другое{% endif %}
                                             </td>
                                             <td class="new-value changed">

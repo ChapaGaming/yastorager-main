@@ -44,18 +44,26 @@ class Things(SQLModel, table=True):
 class Promises(SQLModel, table=True):
     __tablename__ = "promises"
     id: Optional[int] = Field(default=None, primary_key=True)
-    message: Optional[str] = Field(default=None)
+    
     created_at: Optional[datetime] = Field(default=None)
     die_at: Optional[datetime] = Field(default=None)
+
     priority: str = Field(default="Средний")
     status: str = Field(default="На рассмотрении")
+    message: Optional[str] = Field(default=None)
+
     new_name: Optional[str] = Field(default=None)
     new_description: Optional[str] = Field(default=None)
     new_amount: Optional[int] = Field(default=None)
     new_buy_cost: Optional[float] = Field(default=None)
     new_kind: Optional[str] = Field(default=None)
     
-    # ВАЖНО: foreign_key - строки!
+    old_name: Optional[str] = Field(default=None)
+    old_description: Optional[str] = Field(default=None)
+    old_amount: Optional[int] = Field(default=None)
+    old_buy_cost: Optional[float] = Field(default=None)
+    old_kind: Optional[str] = Field(default=None)
+
     user_id: Optional[int] = Field(
         default=None, 
         foreign_key="users.id",
@@ -69,8 +77,6 @@ class Promises(SQLModel, table=True):
     
     owner: Optional["Users"] = Relationship(back_populates="promises")
     thing: Optional["Things"] = Relationship(back_populates="requests")
-
-    old_thing: Optional["Things"]
 
 # Утилиты
 def hashing(text):
@@ -182,7 +188,7 @@ async def authenticate_user(request: Request, html: str = "-1", **variables_html
             
         except jwt.ExpiredSignatureError:
             print("Access токен просрочен, пробуем обновить...")
-            pass  # Продолжаем дальше
+            
     
     # Пробуем refresh токен
     refresh_token = request.cookies.get("refresh")
@@ -428,13 +434,13 @@ async def login(request: Request, session: SessionDep,
 @app.post("/operator/edit/{id}")  # ← ДОБАВИЛИ name="login_user"
 async def login(request: Request, session: SessionDep,
                 id: int,
-                new_name: str|None = Form(...),
-                new_description: str|None = Form(...),
-                new_amount: int|None = Form(...),
-                new_buy_cost: float|None = Form(...),
-                new_kind: str|None = Form(...),
-                priority: str|None = Form(...),
-                comment: str|None = Form(...)
+                new_name: str = Form(...),
+                new_description: str = Form(...),
+                new_amount: int = Form(...),
+                new_buy_cost: float = Form(...),
+                new_kind: str = Form(...),
+                priority: str = Form(...),
+                comment: str = Form(...)
                 ):
     
     auth_data = await authenticate_user(request, "-1")
@@ -453,18 +459,23 @@ async def login(request: Request, session: SessionDep,
                            created_at=datetime.now(),
                            die_at=(datetime.now()+timedelta(days=14)),
                            priority=priority,
-                           message=comment)
+                           message=comment,
+                           old_amount=thing.amount,
+                           old_buy_cost=thing.buy_cost,
+                           old_kind=thing.kind,
+                           old_description=thing.description,
+                           old_name=thing.name)
         
         if thing.name == promise.new_name:
             promise.new_name = None
         if thing.description == promise.new_description:
-            promise.new_name = None
+            promise.new_description = None
         if thing.amount == promise.new_amount:
-            promise.new_name = None
+            promise.new_amount = None
         if thing.buy_cost == promise.new_buy_cost:
-            promise.new_name = None
+            promise.new_buy_cost = None
         if thing.kind == promise.new_kind:
-            promise.new_name = None
+            promise.new_nnew_kindme = None
 
         session.add(promise)
         await session.commit()

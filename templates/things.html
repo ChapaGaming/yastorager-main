@@ -4,7 +4,23 @@
 
 {% block content %}
 <h1>Каталог запчастей</h1>
-
+<div class="action-buttons" style="margin-top: 30px;">
+                    <a href="/profile" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Назад к профилю
+                    </a>
+                    {% if user.admin %}
+                    <!-- Для администратора - управление заявками -->
+                    <a href="/admin/requests" class="btn btn-admin">
+                        <i class="fas fa-clipboard-list"></i> Управление заявками
+                    </a>
+                    {% else %}
+                    <!-- Для оператора - просмотр своих заявок -->
+                    <a href="/operator/requests" class="btn btn-operator">
+                        <i class="fas fa-paper-plane"></i> Мои заявки
+                    </a>
+                    {% endif %}
+                </div>
+                <br>
 <style>
     .add{
         font-size: 40px; color: white; text-decoration: none;

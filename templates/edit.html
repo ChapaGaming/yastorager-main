@@ -789,36 +789,7 @@
                     <input type="hidden" name="thing_id" value="{{thing.id}}">
                     
                     <!-- Поле ID (только для чтения - для отображения) -->
-                    <div class="form-group">
-                        <label><i class="fas fa-hashtag"></i> ID</label>
-                        <input type="text" value="{{thing.id}}" readonly disabled class="readonly-field">
-                    </div>
-
-                    <!-- Текущие значения (только для просмотра) -->
-                    <div class="form-group">
-                        <label><i class="fas fa-tag"></i> Текущее наименование</label>
-                        <input type="text" value="{{thing.name}}" readonly disabled class="readonly-field">
-                    </div>
-
-                    <div class="form-group full-width">
-                        <label><i class="fas fa-barcode"></i> Текущий индикаторный номер</label>
-                        <input type="text" value="{{thing.description}}" readonly disabled class="readonly-field">
-                    </div>
-
-                    <div class="form-group">
-                        <label><i class="fas fa-cubes"></i> Текущее количество</label>
-                        <input type="text" value="{{thing.amount}}" readonly disabled class="readonly-field">
-                    </div>
-
-                    <div class="form-group">
-                        <label><i class="fas fa-ruble-sign"></i> Текущая цена</label>
-                        <input type="text" value="{{thing.buy_cost}} ₽" readonly disabled class="readonly-field">
-                    </div>
-
-                    <div class="form-group">
-                        <label><i class="fas fa-cog"></i> Текущая категория</label>
-                        <input type="text" value="{% if thing.kind == 'engine' %}🔧 Двигатель{% elif thing.kind == 'transmission' %}⚙️ Трансмиссия{% elif thing.kind == 'suspension' %}🛞 Подвеска{% elif thing.kind == 'electrical' %}⚡ Электрика{% elif thing.kind == 'body' %}🚗 Кузов{% else %}📦 Другое{% endif %}" readonly disabled class="readonly-field">
-                    </div>
+                    
 
                     <!-- Форма создания заявки -->
                     <div class="request-form-section">
@@ -893,18 +864,18 @@
                         </div>
 
                         <div class="request-priority" id="prioritySelector">
-                        <div class="priority-option" data-priority="низкий">
+                        <div class="priority-option" data-priority="Низкий">
                             <div class="priority-low">🟢 Низкий</div>
                         </div>
-                        <div class="priority-option selected" data-priority="средний">
+                        <div class="priority-option selected" data-priority="Средний">
                             <div class="priority-medium">🟡 Средний</div>
                         </div>
-                        <div class="priority-option" data-priority="высокий">
+                        <div class="priority-option" data-priority="Высокий">
                             <div class="priority-high">🔴 Высокий</div>
                         </div>
                     </div>
                     <!-- Скрытое поле для приоритета -->
-                    <input type="hidden" name="priority" id="priority_field" value="средний">
+                    <input type="hidden" name="priority" id="priority_field" value="Средний">
 
 
                         <!-- Комментарий -->
@@ -922,7 +893,12 @@
                             </button>
                         </div>
                     </div>
-
+                    <div class="action-buttons" style="margin-top: 30px;">
+                    <a href="/profile" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Назад к профилю
+                    </a>
+                    
+                </div>
                     <!-- Кнопка отмены (НЕ В ФОРМЕ) -->
                     <div class="form-actions">
                         <a href="/things" class="btn btn-secondary">
@@ -1042,9 +1018,9 @@
             });
 
             const priorityEmoji = {
-                'низкий': '🟢',
-                'средний': '🟡',
-                'высокий': '🔴'
+                'Низкий': '🟢',
+                'Средний': '🟡',
+                'Высокий': '🔴'
             }[request.priority] || '🟡';
 
             const priorityText = {
@@ -1121,11 +1097,11 @@
         // Сброс приоритета на средний
         document.querySelectorAll('.priority-option').forEach(opt => {
             opt.classList.remove('selected');
-            if (opt.dataset.priority === 'средний') {
+            if (opt.dataset.priority === 'Средний') {
                 opt.classList.add('selected');
             }
         });
-        document.getElementById('priority_field').value = 'средний';
+        document.getElementById('priority_field').value = 'Ссредний';
     }
     </script>
 
