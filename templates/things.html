@@ -1,0 +1,126 @@
+{% extends "base_wd.html" %}
+
+{% block title %}Каталог запчастей{% endblock %}
+
+{% block content %}
+<h1>Каталог запчастей</h1>
+
+<style>
+    .add{
+        font-size: 40px; color: white; text-decoration: none;
+    }
+    .add:hover{
+        font-size: 40px; color: rgb(167, 166, 166); text-decoration: none;
+    }
+    .id-column {
+        color: #666;
+        font-size: 0.9em;
+    }
+    .real-id {
+        display: none; /* Скрываем реальный ID, если хотим */
+    }
+</style>
+
+<table>
+    <thead>
+        <tr>
+            <th>#</th>  <!-- Изменили с "ID" на просто номер -->
+            <th>Название</th>
+            <th>Количество</th>
+            <th>Цена</th>
+            <th>Тип</th>
+            <th>Действия</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for thing in things %}
+        <tr>
+            <!-- Используем loop.index вместо thing.id -->
+            <td class="id-column">{{ loop.index }}</td>
+            
+            <!-- Можно показать реальный ID маленьким и серым (опционально) -->
+            <!-- <td><small style="color:#999;">{{ thing.id }}</small></td> -->
+            
+            <td>{{ thing.name }}</td>
+            
+            {% if thing.amount <= 3 %}
+            <td style="color:red"><b>{{ thing.amount }} шт</b></td>
+            {% elif thing.amount > 3 and thing.amount <= 15 %}
+            <td style="color:rgb(219, 150, 0)"><i>{{ thing.amount }} шт</i></td>
+            {% else %}
+            <td>{{ thing.amount }} шт</td>
+            {% endif %}
+            
+            <td>{{ thing.buy_cost }} ₽</td>
+            
+            {% if thing.kind == "engine" %}
+            <td>Двигатель</td>
+            {% elif thing.kind == "transmission" %}
+            <td>Трансмиссия</td>  <!-- Исправил опечатку -->
+            {% elif thing.kind == "suspension" %}
+            <td>Подвеска</td>
+            {% elif thing.kind == "electrical" %}
+            <td>Электрика</td>
+            {% elif thing.kind == "body" %}
+            <td>Кузов</td>  <!-- "Корпус" → "Кузов" для авто -->
+            {% else %}
+            <td>Другое</td>
+            {% endif %}
+            
+            <td>
+                {% if user.admin %}
+                <a href="/edit/{{ thing.id }}" title="Редактировать">✏️</a>
+                <a href="/admin/delete/{{ thing.id }}" 
+                   onclick="return confirm('Удалить {{ thing.name }}?')"
+                   title="Удалить">🗑️</a>
+                {% else %}
+                <a href="/edit/{{ thing.id }}" title="Просмотр">📋</a>
+                {% endif %}
+            </td>
+        </tr>
+        {% else %}
+        <tr>
+            <td colspan="6">Нет запчастей в каталоге</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<!-- Простая статистика -->
+ {% if user.admin %}
+    <center>
+        <a class="add" href="/admin/add" title="Добавить запчасть">✚</a>
+    </center>
+    {% endif %}
+<div style="margin-top: 20px; padding: 10px;">
+    <p><strong>Статистика:</strong></p>
+    <p>Всего позиций: <strong>{{ things|length }}</strong> шт</p>
+    <p>Общая стоимость: <strong>{{total_value}} ₽</strong></p>
+    <p>Товаров с количеством ≤3: 
+        <strong style="color:red">
+            {{ things|selectattr('amount', 'le', 3)|list|length }}
+        </strong>
+    </p>
+    <p>
+        Товаров с количеством ≤15:
+        <i style="color:rgb(219, 150, 0)">
+            {{ things|selectattr('amount', 'le', 15)|list|length }}
+        </i>
+    </p>
+    
+    
+</div>
+
+<!-- Добавим небольшую справку (опционально) -->
+{% if user.admin %}
+<div style="margin-top: 10px; font-size: 0.8em; color: #999;">
+    <p>Для отладки: реальные ID в базе: 
+        {% for thing in things %}
+            {% if not loop.first %}, {% endif %}
+            {{ thing.id }}
+        {% endfor %}
+    </p>
+</div>
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,160 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <!-- Индустриальный фон -->
+    <div class="industrial-background">
+        <div class="gear gear-large" id="gear1">
+            <div class="gear-tooth"></div><div class="gear-tooth"></div><div class="gear-tooth"></div>
+            <div class="gear-tooth"></div><div class="gear-tooth"></div><div class="gear-tooth"></div>
+            <div class="gear-tooth"></div><div class="gear-tooth"></div><div class="gear-tooth"></div>
+            <div class="gear-tooth"></div><div class="gear-tooth"></div><div class="gear-tooth"></div>
+        </div>
+        <div class="gear gear-medium" id="gear2">
+            <div class="gear-tooth"></div><div class="gear-tooth"></div><div class="gear-tooth"></div>
+            <div class="gear-tooth"></div><div class="gear-tooth"></div><div class="gear-tooth"></div>
+            <div class="gear-tooth"></div><div class="gear-tooth"></div>
+        </div>
+        <div class="gear gear-small" id="gear3">
+            <div class="gear-tooth"></div><div class="gear-tooth"></div><div class="gear-tooth"></div>
+            <div class="gear-tooth"></div><div class="gear-tooth"></div><div class="gear-tooth"></div>
+        </div>
+        <div class="piston" id="piston1"></div>
+        <div class="piston" id="piston2"></div>
+        <div class="engine-block" id="engine1"></div>
+        <div class="engine-block" id="engine2"></div>
+        <div class="pipe" id="pipe1"></div>
+        <div class="pipe" id="pipe2"></div>
+    </div>
+    
+    <!-- Контейнер для ошибок -->
+    <div class="error-container" id="errorContainer"></div>
+    
+    <div class="container">
+        <div class="header">
+            <div class="header-icon">
+                <i class="fas fa-cogs"></i>
+            </div>
+            <h1>ГАЗ</h1>
+            <p>Регистрация в системе управления запчастями</p>
+        </div>
+        
+        <div class="pages-container">
+            <div class="page register">
+                <div class="page-title">
+                    <div class="title-icon">
+                        <i class="fas fa-user-plus"></i>
+                    </div>
+                    <h2>Создание аккаунта</h2>
+                    <p>Зарегистрируйтесь для доступа к запчастям</p>
+                </div>
+                
+                {% if error %}
+                <div class="error-popup" style="display: block; margin-bottom: 20px;">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <div class="error-popup-content">
+                        <h4>Ошибка регистрации</h4>
+                        <p>{{ error }}</p>
+                    </div>
+                </div>
+                {% endif %}
+                
+                <form method="POST" action="/register" id="registerForm">
+                    <div class="form-group">
+                        <label for="registerName">
+                            <i class="fas fa-id-card"></i> Имя оператора
+                        </label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-user"></i>
+                            <input type="text" id="registerName" name="fio" 
+                                   placeholder="Введите ваше полное имя" required
+                                   value="{{ fio if fio else '' }}">
+                            <div class="error-message" id="nameError"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="registerEmail">
+                            <i class="fas fa-at"></i> Технический email
+                        </label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-envelope"></i>
+                            <input type="email" id="registerEmail" name="email" 
+                                   placeholder="operator@gaz-project.com" required
+                                   value="{{ email if email else '' }}">
+                            <div class="error-message" id="emailError"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="registerPassword">
+                            <i class="fas fa-key"></i> Придумайте пароль
+                        </label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" id="registerPassword" name="password" 
+                                   placeholder="Минимум 8 символов" required>
+                            <span class="password-toggle" id="registerPasswordToggle">
+                                <i class="fas fa-eye"></i>
+                            </span>
+                            <div class="error-message" id="passwordError"></div>
+                        </div>
+                        <div class="password-hint">
+                            <i class="fas fa-info-circle"></i> Должен содержать цифры, буквы разного регистра
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="registerConfirmPassword">
+                            <i class="fas fa-redo"></i> Подтверждение ключа
+                        </label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" id="registerConfirmPassword" name="password_rep" 
+                                   placeholder="Повторите ключ доступа" required>
+                            <span class="password-toggle" id="registerConfirmPasswordToggle">
+                                <i class="fas fa-eye"></i>
+                            </span>
+                            <div class="error-message" id="confirmPasswordError"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="registerPassword">
+                            <i class="fas fa-key"></i> Ключ доступа
+                        </label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" id="registerPassword" name="admin_key" 
+                                   placeholder="Не обязательно">
+                            <span class="password-toggle" id="registerPasswordToggle">
+                                <i class="fas fa-eye"></i>
+                            </span>
+                            <div class="error-message" id="passwordError"></div>
+                        </div>
+                        <div class="password-hint">
+                            <i class="fas fa-info-circle"></i> Можно узнать у предприятия
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn">
+                        <i class="fas fa-cogs"></i> Зарегистрировать оператора
+                    </button>
+                    
+                    <div class="links">
+                        <p>Уже зарегистрированы? <a href="/login" id="goToLogin">
+                            <i class="fas fa-sign-in-alt"></i> Войти в систему
+                        </a></p>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <div class="footer-icons">
+                <i class="fas fa-cog"></i>
+                <i class="fas fa-industry"></i>
+                <i class="fas fa-tools"></i>
+            </div>
+        </div>
+    </div>
+{% endblock %}

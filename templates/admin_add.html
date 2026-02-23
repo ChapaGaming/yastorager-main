@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+
+{% block extra_css %}
+<style>
+    /* Дополнительные стили специфичные для login */
+    .login-special {
+        /* ваши стили */
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+    <!-- Индустриальный фон -->
+     
+    <div class="industrial-background">
+        <div class="gear gear-large" id="gear1">
+            <div class="gear-tooth"></div><div class="gear-tooth"></div><div class="gear-tooth"></div>
+            <div class="gear-tooth"></div><div class="gear-tooth"></div><div class="gear-tooth"></div>
+            <div class="gear-tooth"></div><div class="gear-tooth"></div><div class="gear-tooth"></div>
+            <div class="gear-tooth"></div><div class="gear-tooth"></div><div class="gear-tooth"></div>
+        </div>
+        <div class="gear gear-medium" id="gear2">
+            <div class="gear-tooth"></div><div class="gear-tooth"></div><div class="gear-tooth"></div>
+            <div class="gear-tooth"></div><div class="gear-tooth"></div><div class="gear-tooth"></div>
+            <div class="gear-tooth"></div><div class="gear-tooth"></div>
+        </div>
+        <div class="gear gear-small" id="gear3">
+            <div class="gear-tooth"></div><div class="gear-tooth"></div><div class="gear-tooth"></div>
+            <div class="gear-tooth"></div><div class="gear-tooth"></div><div class="gear-tooth"></div>
+        </div>
+        <div class="piston" id="piston1"></div>
+        <div class="piston" id="piston2"></div>
+        <div class="engine-block" id="engine1"></div>
+        <div class="engine-block" id="engine2"></div>
+        <div class="pipe" id="pipe1"></div>
+        <div class="pipe" id="pipe2"></div>
+    </div>
+    
+    <!-- Контейнер для всплывающих сообщений об ошибках -->
+    <div class="error-container" id="errorContainer"></div>
+    
+    <div class="container">
+        <div class="header">
+            <div class="header-icon">
+                <i class="fas fa-cogs"></i>
+            </div>
+            <h1>ГАЗ</h1>
+            <p>Вход в систему управления запчастями</p>
+        </div>
+        <style>
+            .submit{
+                background-color: rgb(59, 167, 45);color:azure;border: 0px; width: 200px;height: 50px;border-radius: 20px; transition: transform 0.2s;
+            }
+            .submit:hover{
+                box-shadow: 20px;
+                width: 220px;height: 70px;
+                transform: scale(1.1);
+            }
+        </style>
+        <div class="pages-container">
+            <!-- Форма входа -->
+            <div class="page login" id="loginPage">
+                <div class="page-title">
+                    <div class="title-icon">
+                        <i class="fas fa-sign-in-alt"></i>
+                    </div>
+                    <h2>Добавление запчасти</h2>
+                    <p>Введите данные запчасти</p>
+                </div>
+                
+                <!-- Проверка наличия ошибки из FastAPI -->
+                {% if error %}
+                <div class="error-popup" style="display: block; margin-bottom: 20px;">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <div class="error-popup-content">
+                        <h4>Ошибка авторизации</h4>
+                        <p>{{ error }}</p>
+                    </div>
+                </div>
+                {% endif %}
+                
+                <!-- Форма с action на правильный эндпоинт -->
+                <form method="POST" action="/admin/add" id="loginForm">
+                    <div class="form-group">
+                        <label for="name">
+                            <i class="fas fa-at"></i> name
+                        </label>
+                        <div class="input-with-icon">
+                            <input id="loginEmail" name="name" 
+                                   placeholder="..." required>
+                            <div class="error-message" id="loginEmailError"></div>
+                        </div>
+
+                        <label for="description">
+                            <i class="fas fa-at"></i> description
+                        </label>
+                        <div class="input-with-icon">
+                            <input id="loginEmail" name="description" 
+                                   placeholder="..." required>
+                            <div class="error-message" id="loginEmailError"></div>
+                        </div>
+
+                        <label for="amount">
+                            <i class="fas fa-at"></i> amount
+                        </label>
+                        <div class="input-with-icon">
+                            <input id="loginEmail" name="amount" 
+                                   placeholder="0" required>
+                            <div class="error-message" id="loginEmailError"></div>
+                        </div>
+
+                        <label for="buy_cost">
+                            
+                            <i class="fas fa-at"></i> buy_cost
+                        </label>
+                        <div class="input-with-icon">
+                            <input id="loginEmail" name="buy_cost" 
+                                   placeholder="0" required>
+                            <div class="error-message" id="loginEmailError"></div>
+                        </div>
+                        <div class="input-with-icon">
+                            <select id="loginEmail" name="kind" required>
+                                <option>engine</option>
+                                <option>transmission</option>
+                                <option>suspension</option><!--подвеска-->
+                                <option>electrical</option>
+                                <option>body</option>
+                                <option>other</option>
+                            </select>
+                            <div class="error-message" id="loginEmailError"></div>
+                        </div><br><br>
+                        <center><button type="submit" class = "submit"><b>СОЗДАТЬ</b></button></center>
+                        
+                    </div>
+                    
+                </form>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <div class="footer-icons">
+                <i class="fas fa-cog"></i>
+                <i class="fas fa-industry"></i>
+                <i class="fas fa-tools"></i>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+
+
+{% block extra_js %}
+<script>
+    // Дополнительный JS для страницы логина
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('Login page loaded');
+        
+        // Добавьте здесь специфичный для логина JavaScript
+    });
+</script>
+{% endblock %}
+

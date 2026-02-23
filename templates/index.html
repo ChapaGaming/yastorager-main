@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <!-- Индустриальный фон -->
+    <div class="industrial-background">
+        <div class="gear gear-large" id="gear1">
+            <div class="gear-tooth"></div><div class="gear-tooth"></div><div class="gear-tooth"></div>
+            <div class="gear-tooth"></div><div class="gear-tooth"></div><div class="gear-tooth"></div>
+            <div class="gear-tooth"></div><div class="gear-tooth"></div><div class="gear-tooth"></div>
+            <div class="gear-tooth"></div><div class="gear-tooth"></div><div class="gear-tooth"></div>
+        </div>
+        <div class="gear gear-medium" id="gear2">
+            <div class="gear-tooth"></div><div class="gear-tooth"></div><div class="gear-tooth"></div>
+            <div class="gear-tooth"></div><div class="gear-tooth"></div><div class="gear-tooth"></div>
+            <div class="gear-tooth"></div><div class="gear-tooth"></div>
+        </div>
+        <div class="gear gear-small" id="gear3">
+            <div class="gear-tooth"></div><div class="gear-tooth"></div><div class="gear-tooth"></div>
+            <div class="gear-tooth"></div><div class="gear-tooth"></div><div class="gear-tooth"></div>
+        </div>
+        <div class="piston" id="piston1"></div>
+        <div class="piston" id="piston2"></div>
+        <div class="engine-block" id="engine1"></div>
+        <div class="engine-block" id="engine2"></div>
+        <div class="pipe" id="pipe1"></div>
+        <div class="pipe" id="pipe2"></div>
+    </div>
+    
+    <div class="container">
+        <div class="header">
+            <div class="header-icon">
+                <i class="fas fa-cogs"></i>
+            </div>
+            <h1>MechAuth System</h1>
+            <p>Система управления механизмами</p>
+        </div>
+        
+        <div class="pages-container">
+            <div class="page welcome">
+                <div class="page-title">
+                    <div class="title-icon">
+                        <i class="fas fa-industry"></i>
+                    </div>
+                    <h2>Добро пожаловать</h2>
+                    <p>Выберите действие для продолжения</p>
+                </div>
+                
+                <div class="action-buttons">
+                    <a href="/login" class="btn btn-primary">
+                        <i class="fas fa-sign-in-alt"></i> Вход в систему
+                    </a>
+                    
+                    <a href="/register" class="btn btn-secondary">
+                        <i class="fas fa-user-plus"></i> Регистрация
+                    </a>
+                </div>
+                
+                <div class="welcome-info">
+                    <h3><i class="fas fa-info-circle"></i> О системе</h3>
+                    <p>MechAuth System - современная система управления промышленными механизмами с безопасной авторизацией операторов.</p>
+                    
+                    <div class="features">
+                        <div class="feature">
+                            <i class="fas fa-shield-alt"></i>
+                            <h4>Безопасность</h4>
+                            <p>Многоуровневая защита доступа</p>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-cogs"></i>
+                            <h4>Механизмы</h4>
+                            <p>Управление двигателями и шестернями</p>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-chart-line"></i>
+                            <h4>Мониторинг</h4>
+                            <p>Контроль состояния оборудования</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <div class="footer-icons">
+                <i class="fas fa-cog"></i>
+                <i class="fas fa-industry"></i>
+                <i class="fas fa-tools"></i>
+            </div>
+            <p>© 2023 MechAuth System. Система управления механизмами.</p>
+            <p class="footer-sub">Все механизмы требуют авторизации</p>
+        </div>
+    </div>
+{% endblock %}

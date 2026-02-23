@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        {% if title %}
+            {{ title }} | ГАЗ
+        {% else %}
+            ГАЗ
+        {% endif %}
+    </title>
+    
+    <!-- CSS через Jinja2 -->
+    <link rel="stylesheet" href="{{ url_for('static', path='/css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    {% block extra_css %}{% endblock %}
+    <style>
+    body {
+        background: linear-gradient(135deg, #0a0e1a 0%, #1a2036 100%);
+        color: #e2e8f0;
+        min-height: 100vh;
+    }
+        /* Fallback стили на случай проблем с CSS */
+        .loading-fallback {
+            display: none;
+            text-align: center;
+            padding: 50px;
+            color: #60a5fa;
+            font-size: 1.2rem;
+        }
+        
+        body.css-loading .loading-fallback {
+            display: block;
+        }
+        
+        body.css-loading main {
+            display: none;
+        }
+    </style>
+</head>
+<body class="css-loading">
+    <div class="loading-fallback">
+        <i class="fas fa-cog fa-spin fa-2x"></i>
+        <p>Инициализация запчастей...</p>
+    </div>
+    
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+    
+    <!-- JavaScript через Jinja2 -->
+    <script src="{{ url_for('static', path='/js/script.js') }}"></script>
+    
+    <script>
+        // Убрать сообщение о загрузке когда CSS загружен
+        document.addEventListener('DOMContentLoaded', function() {
+            // Проверяем загрузились ли стили
+            function checkCSSLoaded() {
+                for (var i = 0; i < document.styleSheets.length; i++) {
+                    try {
+                        if (document.styleSheets[i].cssRules.length > 0) {
+                            return true;
+                        }
+                    } catch(e) {
+                        // Пропускаем внешние стили с CORS
+                    }
+                }
+                return false;
+            }
+            
+            if (checkCSSLoaded()) {
+                document.body.classList.remove('css-loading');
+            } else {
+                // Ждем еще немного
+                setTimeout(function() {
+                    document.body.classList.remove('css-loading');
+                }, 1000);
+            }
+        });
+    </script>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

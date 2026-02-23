@@ -1,0 +1,108 @@
+/* style_wide.css - Широкие стили для каталога */
+
+/* Сброс */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background: #f5f7fa;
+}
+
+/* Широкий контейнер */
+.wide-container {
+    max-width: 98vw;
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 1vw;
+}
+
+/* Шапка для широких страниц */
+.wide-header {
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    color: white;
+    padding: 15px 0;
+    box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.wide-header-container {
+    max-width: 98vw;
+    margin: 0 auto;
+    padding: 0 2vw;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.wide-logo {
+    color: white;
+    text-decoration: none;
+    font-size: 1.5rem;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.wide-logo i {
+    font-size: 1.8rem;
+}
+
+.wide-nav {
+    display: flex;
+    gap: 30px;
+}
+
+.wide-nav a {
+    color: white;
+    text-decoration: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    transition: background 0.3s;
+}
+
+.wide-nav a:hover,
+.wide-nav a.active {
+    background: rgba(255,255,255,0.1);
+}
+
+/* Основное содержимое */
+.wide-main {
+    min-height: calc(100vh - 120px);
+    padding: 30px 0;
+}
+
+/* Широкий футер */
+.wide-footer {
+    background: #2a5298;
+    color: white;
+    text-align: center;
+    padding: 20px;
+    margin-top: auto;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .wide-header-container {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .wide-nav {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 15px;
+    }
+    
+    .wide-container {
+        padding: 0 10px;
+    }
+}

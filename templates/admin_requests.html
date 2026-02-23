@@ -1,0 +1,1085 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Управление заявками | ГАЗ</title>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* ========== ОСНОВНЫЕ СТИЛИ ========== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a0e1a 0%, #1a2036 100%);
+            color: #e2e8f0;
+            min-height: 100vh;
+            line-height: 1.5;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* ========== CSS-ПЕРЕМЕННЫЕ ========== */
+        :root {
+            --primary-color: #a78bfa;
+            --secondary-color: #60a5fa;
+            --accent-color: #3b82f6;
+            --bg-color: rgba(255, 255, 255, 0.02);
+            --card-bg: rgba(20, 25, 40, 0.6);
+            --text-color: #e2e8f0;
+            --text-secondary: #9ca3af;
+            --border-color: rgba(255, 255, 255, 0.05);
+            --border-light: rgba(255, 255, 255, 0.03);
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --code-bg: rgba(0, 0, 0, 0.3);
+        }
+
+        /* ========== ИНДУСТРИАЛЬНЫЙ ФОН ========== */
+        .industrial-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.1;
+        }
+
+        .gear {
+            position: absolute;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            animation: rotate 20s linear infinite;
+        }
+
+        .gear::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 30%;
+            height: 30%;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+        }
+
+        .gear-tooth {
+            position: absolute;
+            width: 20%;
+            height: 8%;
+            background: rgba(255, 255, 255, 0.2);
+            top: 46%;
+            transform-origin: 100% 50%;
+        }
+
+        .gear-large {
+            width: 300px;
+            height: 300px;
+            top: 10%;
+            left: 5%;
+        }
+
+        .gear-medium {
+            width: 200px;
+            height: 200px;
+            bottom: 20%;
+            right: 10%;
+            animation-direction: reverse;
+            animation-duration: 15s;
+        }
+
+        .gear-small {
+            width: 150px;
+            height: 150px;
+            top: 30%;
+            right: 20%;
+            animation-duration: 12s;
+        }
+
+        .gear-large .gear-tooth:nth-child(1) { transform: rotate(0deg) translateX(150px); }
+        .gear-large .gear-tooth:nth-child(2) { transform: rotate(30deg) translateX(150px); }
+        .gear-large .gear-tooth:nth-child(3) { transform: rotate(60deg) translateX(150px); }
+        .gear-large .gear-tooth:nth-child(4) { transform: rotate(90deg) translateX(150px); }
+        .gear-large .gear-tooth:nth-child(5) { transform: rotate(120deg) translateX(150px); }
+        .gear-large .gear-tooth:nth-child(6) { transform: rotate(150deg) translateX(150px); }
+        .gear-large .gear-tooth:nth-child(7) { transform: rotate(180deg) translateX(150px); }
+        .gear-large .gear-tooth:nth-child(8) { transform: rotate(210deg) translateX(150px); }
+        .gear-large .gear-tooth:nth-child(9) { transform: rotate(240deg) translateX(150px); }
+        .gear-large .gear-tooth:nth-child(10) { transform: rotate(270deg) translateX(150px); }
+        .gear-large .gear-tooth:nth-child(11) { transform: rotate(300deg) translateX(150px); }
+        .gear-large .gear-tooth:nth-child(12) { transform: rotate(330deg) translateX(150px); }
+
+        .gear-medium .gear-tooth:nth-child(1) { transform: rotate(0deg) translateX(100px); }
+        .gear-medium .gear-tooth:nth-child(2) { transform: rotate(45deg) translateX(100px); }
+        .gear-medium .gear-tooth:nth-child(3) { transform: rotate(90deg) translateX(100px); }
+        .gear-medium .gear-tooth:nth-child(4) { transform: rotate(135deg) translateX(100px); }
+        .gear-medium .gear-tooth:nth-child(5) { transform: rotate(180deg) translateX(100px); }
+        .gear-medium .gear-tooth:nth-child(6) { transform: rotate(225deg) translateX(100px); }
+        .gear-medium .gear-tooth:nth-child(7) { transform: rotate(270deg) translateX(100px); }
+        .gear-medium .gear-tooth:nth-child(8) { transform: rotate(315deg) translateX(100px); }
+
+        .gear-small .gear-tooth:nth-child(1) { transform: rotate(0deg) translateX(75px); }
+        .gear-small .gear-tooth:nth-child(2) { transform: rotate(60deg) translateX(75px); }
+        .gear-small .gear-tooth:nth-child(3) { transform: rotate(120deg) translateX(75px); }
+        .gear-small .gear-tooth:nth-child(4) { transform: rotate(180deg) translateX(75px); }
+        .gear-small .gear-tooth:nth-child(5) { transform: rotate(240deg) translateX(75px); }
+        .gear-small .gear-tooth:nth-child(6) { transform: rotate(300deg) translateX(75px); }
+
+        .piston {
+            position: absolute;
+            width: 10px;
+            height: 100px;
+            background: rgba(255, 255, 255, 0.2);
+            bottom: 10%;
+            left: 20%;
+            animation: pistonMove 3s ease-in-out infinite;
+        }
+
+        .piston::before {
+            content: '';
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            top: -15px;
+            left: -10px;
+        }
+
+        #piston2 {
+            left: 30%;
+            animation-delay: 1s;
+        }
+
+        .engine-block {
+            position: absolute;
+            width: 80px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.15);
+            bottom: 15%;
+            left: 25%;
+            border-radius: 10px;
+            animation: glow 4s ease-in-out infinite;
+        }
+
+        #engine2 {
+            left: 35%;
+            animation-delay: 1s;
+        }
+
+        .pipe {
+            position: absolute;
+            width: 15px;
+            height: 150px;
+            background: rgba(255, 255, 255, 0.15);
+            top: 10%;
+            right: 15%;
+            transform: rotate(15deg);
+            border-radius: 10px;
+        }
+
+        #pipe2 {
+            right: 25%;
+            height: 200px;
+            transform: rotate(-5deg);
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes pistonMove {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-30px); }
+        }
+
+        @keyframes glow {
+            0%, 100% { opacity: 0.15; }
+            50% { opacity: 0.3; }
+        }
+
+        /* ========== ОСНОВНОЙ КОНТЕЙНЕР ========== */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ========== ШАПКА ========== */
+        .header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .header-icon {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* ========== СТРАНИЦЫ ========== */
+        .pages-container {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 2rem;
+            padding: 2rem;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 20px 30px -15px rgba(0, 0, 0, 0.5);
+        }
+
+        .page-title {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .title-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .page-title h2 {
+            font-size: 1.8rem;
+            color: var(--text-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .page-title p {
+            color: var(--text-secondary);
+        }
+
+        /* ========== ПОПАПЫ ========== */
+        .error-popup, .success-popup {
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            animation: slideIn 0.3s ease;
+        }
+
+        .error-popup {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+        }
+
+        .success-popup {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+        }
+
+        .error-popup i, .success-popup i {
+            font-size: 1.5rem;
+            margin-top: 2px;
+        }
+
+        .error-popup-content h4, .success-popup-content h4 {
+            margin: 0 0 5px 0;
+            color: white;
+        }
+
+        .error-popup-content p, .success-popup-content p {
+            margin: 0;
+            opacity: 0.9;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* ========== ФИЛЬТРЫ ========== */
+        .filters-bar {
+            background: var(--bg-color);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            align-items: flex-end;
+            border: 1px solid var(--border-color);
+        }
+
+        .filter-group {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .filter-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .filter-group select,
+        .filter-group input {
+            width: 100%;
+            padding: 8px 12px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            color: var(--text-color);
+            font-size: 0.9rem;
+        }
+
+        .filter-group select:focus,
+        .filter-group input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(167, 139, 250, 0.2);
+        }
+
+        /* ========== КОНТЕЙНЕР ЗАЯВОК ========== */
+        .requests-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* ========== КАРТОЧКА ЗАЯВКИ ========== */
+        .request-card {
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .request-card:hover {
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transform: translateY(-2px);
+            border-color: rgba(167, 139, 250, 0.3);
+        }
+
+        .request-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .request-info {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .request-id {
+            font-weight: bold;
+            color: var(--primary-color);
+            background: rgba(167, 139, 250, 0.1);
+            padding: 4px 8px;
+            border-radius: 4px;
+            border: 1px solid rgba(167, 139, 250, 0.2);
+        }
+
+        .request-date {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .deadline-badge {
+            background: rgba(245, 158, 11, 0.1);
+            color: #f59e0b;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        .request-badges {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .priority-badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .priority-высокий {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .priority-средний {
+            background: rgba(245, 158, 11, 0.1);
+            color: #f59e0b;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        .priority-низкий {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .status-pending {
+            background: rgba(245, 158, 11, 0.1);
+            color: #f59e0b;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        .status-approved {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .status-rejected {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        /* ========== СОДЕРЖИМОЕ ЗАЯВКИ ========== */
+        .request-content {
+            margin-bottom: 20px;
+        }
+
+        .request-item-info {
+            margin-bottom: 15px;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 4px;
+        }
+
+        .info-row {
+            margin: 5px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .info-row i {
+            width: 20px;
+            color: var(--primary-color);
+        }
+
+        .info-row a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .info-row a:hover {
+            text-decoration: underline;
+        }
+
+        /* ========== ТАБЛИЦА ИЗМЕНЕНИЙ ========== */
+        .request-changes {
+            margin-top: 15px;
+        }
+
+        .request-changes h4 {
+            margin-bottom: 10px;
+            color: var(--text-color);
+            padding: 8px;
+            background: rgba(167, 139, 250, 0.1);
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        .changes-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 4px;
+        }
+
+        .changes-table th {
+            text-align: left;
+            padding: 8px;
+            background: rgba(0, 0, 0, 0.3);
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .changes-table td {
+            padding: 8px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        /* Стили для измененных строк */
+        .changed-row {
+            background: rgba(167, 139, 250, 0.15) !important;
+            border-left: 3px solid var(--primary-color);
+        }
+
+        .new-value {
+            color: var(--primary-color);
+            font-weight: 500;
+        }
+
+        .new-value.changed {
+            color: var(--primary-color) !important;
+            font-weight: 600;
+            position: relative;
+        }
+
+        .new-value.changed::before {
+            content: '→';
+            color: var(--primary-color);
+            margin-right: 8px;
+            font-weight: bold;
+            opacity: 0.8;
+        }
+
+        .changes-table tr.changed-row:hover {
+            background: rgba(167, 139, 250, 0.25) !important;
+        }
+
+        /* ========== КНОПКИ ДЕЙСТВИЙ ========== */
+        .request-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            padding-top: 15px;
+            border-top: 1px solid var(--border-color);
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: linear-gradient(135deg, #059669, #047857);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px -5px #10b981;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: linear-gradient(135deg, #dc2626, #b91c1c);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px -5px #ef4444;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--primary-color);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), #8b5cf6);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #b59ffb, #9f7bfa);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px -5px #8b5cf6;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .processed-label {
+            padding: 8px 15px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 4px;
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
+        }
+
+        /* ========== ПУСТОЕ СОСТОЯНИЕ ========== */
+        .empty-state {
+            text-align: center;
+            padding: 50px;
+            background: var(--bg-color);
+            border-radius: 8px;
+            color: var(--text-secondary);
+        }
+
+        .empty-state i {
+            margin-bottom: 20px;
+            opacity: 0.5;
+            color: var(--text-secondary);
+        }
+
+        .empty-state h3 {
+            margin-bottom: 10px;
+            color: var(--text-color);
+        }
+
+        /* ========== ФУТЕР ========== */
+        .footer {
+            margin-top: 3rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border-color);
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .footer-icons {
+            margin-bottom: 1rem;
+        }
+
+        .footer-icons i {
+            margin: 0 10px;
+            color: var(--primary-color);
+            opacity: 0.5;
+            transition: opacity 0.3s;
+        }
+
+        .footer-icons i:hover {
+            opacity: 1;
+        }
+
+        .footer-sub {
+            margin-top: 0.5rem;
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+
+        /* ========== АДАПТИВНОСТЬ ========== */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .pages-container {
+                padding: 1rem;
+            }
+            
+            .page-title h2 {
+                font-size: 1.5rem;
+            }
+            
+            .filters-bar {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .filter-group {
+                width: 100%;
+            }
+            
+            .request-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Индустриальный фон -->
+    <div class="industrial-background">
+        <div class="gear gear-large" id="gear1">
+            <div class="gear-tooth"></div><div class="gear-tooth"></div><div class="gear-tooth"></div>
+            <div class="gear-tooth"></div><div class="gear-tooth"></div><div class="gear-tooth"></div>
+            <div class="gear-tooth"></div><div class="gear-tooth"></div><div class="gear-tooth"></div>
+            <div class="gear-tooth"></div><div class="gear-tooth"></div><div class="gear-tooth"></div>
+        </div>
+        <div class="gear gear-medium" id="gear2">
+            <div class="gear-tooth"></div><div class="gear-tooth"></div><div class="gear-tooth"></div>
+            <div class="gear-tooth"></div><div class="gear-tooth"></div><div class="gear-tooth"></div>
+            <div class="gear-tooth"></div><div class="gear-tooth"></div>
+        </div>
+        <div class="gear gear-small" id="gear3">
+            <div class="gear-tooth"></div><div class="gear-tooth"></div><div class="gear-tooth"></div>
+            <div class="gear-tooth"></div><div class="gear-tooth"></div><div class="gear-tooth"></div>
+        </div>
+        <div class="piston" id="piston1"></div>
+        <div class="piston" id="piston2"></div>
+        <div class="engine-block" id="engine1"></div>
+        <div class="engine-block" id="engine2"></div>
+        <div class="pipe" id="pipe1"></div>
+        <div class="pipe" id="pipe2"></div>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <div class="header-icon">
+                <i class="fas fa-clipboard-list"></i>
+            </div>
+            <h1>Управление заявками</h1>
+            <p>Административная панель управления заявками операторов</p>
+        </div>
+
+        <div class="pages-container">
+            <div class="page">
+                <div class="page-title">
+                    <div class="title-icon">
+                        <i class="fas fa-tasks"></i>
+                    </div>
+                    <h2>Заявки на изменение запчастей</h2>
+                    <p>Всего заявок: {{ data|length }}</p>
+                </div>
+
+                {% if error %}
+                <div class="error-popup" style="display: block; margin-bottom: 20px;">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <div class="error-popup-content">
+                        <h4>Ошибка</h4>
+                        <p>{{ error }}</p>
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if success %}
+                <div class="success-popup" style="display: block; margin-bottom: 20px;">
+                    <i class="fas fa-check-circle"></i>
+                    <div class="success-popup-content">
+                        <h4>Успешно</h4>
+                        <p>{{ success }}</p>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Фильтры -->
+                <div class="filters-bar">
+                    <div class="filter-group">
+                        <label>Статус:</label>
+                        <select id="statusFilter" onchange="filterRequests()">
+                            <option value="all">Все заявки</option>
+                            <option value="На рассмотрении">На рассмотрении</option>
+                            <option value="Одобрено">Одобренные</option>
+                            <option value="Отклонено">Отклоненные</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Приоритет:</label>
+                        <select id="priorityFilter" onchange="filterRequests()">
+                            <option value="all">Все приоритеты</option>
+                            <option value="Низкий">🟢 Низкий</option>
+                            <option value="Средний">🟡 Средний</option>
+                            <option value="Высокий">🔴 Высокий</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Поиск:</label>
+                        <input type="text" id="searchInput" placeholder="Введите товар или оператора..." onkeyup="filterRequests()">
+                    </div>
+                </div>
+
+                <!-- Список заявок -->
+                <div class="requests-container">
+                    {% if data %}
+                        {% for item in data %}
+                        {% set promise = item[0] %}
+                        {% set thing = item[1] %}
+                        {% set user = item[2] %}
+                        <div class="request-card" data-status="{{ promise.status }}" data-priority="{{ promise.priority }}">
+                            <div class="request-header">
+                                <div class="request-info">
+                                    <span class="request-id">#{{ promise.id }}</span>
+                                    <span class="request-date">{{ promise.created_at.strftime('%d.%m.%Y %H:%M') }}</span>
+                                    {% if promise.die_at %}
+                                    <span class="deadline-badge">
+                                        <i class="fas fa-trash"></i> удалится {{ promise.die_at.strftime('%d.%m.%Y %H:%M') }}
+                                    </span>
+                                    {% endif %}
+                                </div>
+                                <div class="request-badges">
+                                    <span class="priority-badge priority-{{ promise.priority|lower }}">
+                                        {% if promise.priority == "Высокий" %}🔴{% elif promise.priority == "Средний" %}🟡{% else %}🟢{% endif %}
+                                        {{ promise.priority }}
+                                    </span>
+                                    <span class="status-badge 
+                                        {% if promise.status == "На рассмотрении" %}status-pending
+                                        {% elif promise.status == "Одобрено" %}status-approved
+                                        {% elif promise.status == "Отклонено" %}status-rejected
+                                        {% endif %}">
+                                        {% if promise.status == "На рассмотрении" %}⏳ На рассмотрении
+                                        {% elif promise.status == "Одобрено" %}✅ Одобрено
+                                        {% elif promise.status == "Отклонено" %}❌ Отклонено
+                                        {% else %}📝 {{ promise.status }}{% endif %}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="request-content">
+                                <div class="request-item-info">
+                                    <div class="info-row">
+                                        <i class="fas fa-box"></i>
+                                        <strong>Товар:</strong> 
+                                        <a href="/edit/{{ thing.id }}">{{ thing.name }} (ID: {{ thing.id }})</a>
+                                    </div>
+                                    <div class="info-row">
+                                        <i class="fas fa-user"></i>
+                                        <strong>Оператор:</strong> 
+                                        {{ user.fio }} ({{ user.email }})
+                                    </div>
+                                    {% if promise.message %}
+                                    <div class="info-row">
+                                        <i class="fas fa-comment"></i>
+                                        <strong>Комментарий:</strong> 
+                                        {{ promise.message }}
+                                    </div>
+                                    {% endif %}
+                                </div>
+
+                                <!-- ✅ НОВЫЙ БЛОК ИЗМЕНЕНИЙ (работает для всех статусов) -->
+                                <div class="request-changes">
+                                    <h4>Предлагаемые изменения:</h4>
+                                    <table class="changes-table">
+                                        <tr>
+                                            <th>Поле</th>
+                                            <th>Новое значение</th>
+                                        </tr>
+                                        
+                                        <!-- Наименование -->
+                                        {% if promise.new_name %}
+                                        <tr class="changed-row">
+                                            <td>Наименование</td>
+                                            <td class="new-value changed">{{ promise.new_name }}</td>
+                                        </tr>
+                                        {% endif %}
+                                        
+                                        <!-- Индикаторный номер -->
+                                        {% if promise.new_description %}
+                                        <tr class="changed-row">
+                                            <td>Индикаторный номер</td>
+                                            <td class="new-value changed">{{ promise.new_description }}</td>
+                                        </tr>
+                                        {% endif %}
+                                        
+                                        <!-- Количество -->
+                                        {% if promise.new_amount is not none %}
+                                        <tr class="changed-row">
+                                            <td>Количество</td>
+                                            <td class="new-value changed">{{ promise.new_amount }}</td>
+                                        </tr>
+                                        {% endif %}
+                                        
+                                        <!-- Цена -->
+                                        {% if promise.new_buy_cost is not none %}
+                                        <tr class="changed-row">
+                                            <td>Цена закупки</td>
+                                            <td class="new-value changed">{{ promise.new_buy_cost }} ₽</td>
+                                        </tr>
+                                        {% endif %}
+                                        
+                                        <!-- Категория -->
+                                        {% if promise.new_kind %}
+                                        <tr class="changed-row">
+                                            <td>Категория</td>
+                                            <td class="new-value changed">
+                                                {% if promise.new_kind == "engine" %}🔧 Двигатель
+                                                {% elif promise.new_kind == "transmission" %}⚙️ Трансмиссия
+                                                {% elif promise.new_kind == "suspension" %}🛞 Подвеска
+                                                {% elif promise.new_kind == "electrical" %}⚡ Электрика
+                                                {% elif promise.new_kind == "body" %}🚗 Кузов
+                                                {% else %}📦 Другое{% endif %}
+                                            </td>
+                                        </tr>
+                                        {% endif %}
+                                        
+                                        <!-- Если нет изменений -->
+                                        {% if not promise.new_name and not promise.new_description and promise.new_amount is none and promise.new_buy_cost is none and not promise.new_kind %}
+                                        <tr>
+                                            <td colspan="2" style="text-align: center; color: var(--text-secondary); padding: 20px;">
+                                                <i class="fas fa-info-circle"></i> Нет изменений
+                                            </td>
+                                        </tr>
+                                        {% endif %}
+                                    </table>
+                                </div>
+                            </div>
+
+                            {% if promise.status == "На рассмотрении" %}
+                            <div class="request-actions">
+                                <form method="POST" action="/admin/requests/{{ promise.id }}/approve" style="display: inline;">
+                                    <input type="hidden" name="new_name" value="{{ promise.new_name or '' }}">
+                                    <input type="hidden" name="new_description" value="{{ promise.new_description or '' }}">
+                                    <input type="hidden" name="new_amount" value="{{ promise.new_amount or '' }}">
+                                    <input type="hidden" name="new_buy_cost" value="{{ promise.new_buy_cost or '' }}">
+                                    <input type="hidden" name="new_kind" value="{{ promise.new_kind or '' }}">
+                                    <button type="submit" class="btn btn-success" onclick="return confirm('Подтвердить изменения?')">
+                                        <i class="fas fa-check"></i> Одобрить
+                                    </button>
+                                </form>
+                                <form method="POST" action="/admin/requests/{{ promise.id }}/reject" style="display: inline;">                     
+                                    <button type="submit" class="btn btn-danger" onclick="return confirm('Отклонить заявку?')">
+                                        <i class="fas fa-times"></i> Отклонить
+                                    </button>
+                                </form>
+                                <a href="/edit/{{ thing.id }}" class="btn btn-secondary">
+                                    <i class="fas fa-edit"></i> Просмотр товара
+                                </a>
+                            </div>
+                            {% else %}
+                            <div class="request-actions">
+                                <span class="processed-label">
+                                    {% if promise.status == "Одобрено" %}
+                                        ✅ Одобрено 
+                                    {% elif promise.status == "Отклонено" %}
+                                        ❌ Отклонено 
+                                    {% endif %}
+                                </span>
+                                <a href="/edit/{{ thing.id }}" class="btn btn-secondary">
+                                    <i class="fas fa-edit"></i> Просмотр товара
+                                </a>
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                    <div class="empty-state">
+                        <i class="fas fa-inbox fa-3x"></i>
+                        <h3>Нет заявок</h3>
+                        <p>В системе пока нет заявок на изменение запчастей</p>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="action-buttons" style="margin-top: 30px;">
+                    <a href="/profile" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Назад к профилю
+                    </a>
+                    <a href="/things" class="btn btn-primary">
+                        <i class="fas fa-boxes"></i> Каталог запчастей
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <div class="footer-icons">
+                <i class="fas fa-cog"></i>
+                <i class="fas fa-industry"></i>
+                <i class="fas fa-tools"></i>
+            </div>
+            <p>© 2023 ГАЗ. Панель управления заявками.</p>
+            <p class="footer-sub">Администратор: {{ user.fio }}</p>
+        </div>
+    </div>
+
+    <script>
+        function filterRequests() {
+            const statusFilter = document.getElementById('statusFilter').value;
+            const priorityFilter = document.getElementById('priorityFilter').value;
+            const searchText = document.getElementById('searchInput').value.toLowerCase();
+
+            const cards = document.querySelectorAll('.request-card');
+
+            cards.forEach(card => {
+                const status = card.dataset.status;
+                const priority = card.dataset.priority;
+                const cardText = card.textContent.toLowerCase();
+
+                let statusMatch = statusFilter === 'all' || status === statusFilter;
+                let priorityMatch = priorityFilter === 'all' || priority === priorityFilter;
+                let searchMatch = searchText === '' || cardText.includes(searchText);
+
+                if (statusMatch && priorityMatch && searchMatch) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const statusFilter = document.getElementById('statusFilter');
+            const priorityFilter = document.getElementById('priorityFilter');
+            const searchInput = document.getElementById('searchInput');
+            
+            if (statusFilter) statusFilter.addEventListener('change', filterRequests);
+            if (priorityFilter) priorityFilter.addEventListener('change', filterRequests);
+            if (searchInput) searchInput.addEventListener('keyup', filterRequests);
+            
+            filterRequests();
+        });
+    </script>
+</body>
+</html>

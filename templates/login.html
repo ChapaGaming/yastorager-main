@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+
+{% block extra_css %}
+<style>
+    /* Дополнительные стили специфичные для login */
+    .login-special {
+        /* ваши стили */
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+    <!-- Индустриальный фон -->
+    <div class="industrial-background">
+        <div class="gear gear-large" id="gear1">
+            <div class="gear-tooth"></div><div class="gear-tooth"></div><div class="gear-tooth"></div>
+            <div class="gear-tooth"></div><div class="gear-tooth"></div><div class="gear-tooth"></div>
+            <div class="gear-tooth"></div><div class="gear-tooth"></div><div class="gear-tooth"></div>
+            <div class="gear-tooth"></div><div class="gear-tooth"></div><div class="gear-tooth"></div>
+        </div>
+        <div class="gear gear-medium" id="gear2">
+            <div class="gear-tooth"></div><div class="gear-tooth"></div><div class="gear-tooth"></div>
+            <div class="gear-tooth"></div><div class="gear-tooth"></div><div class="gear-tooth"></div>
+            <div class="gear-tooth"></div><div class="gear-tooth"></div>
+        </div>
+        <div class="gear gear-small" id="gear3">
+            <div class="gear-tooth"></div><div class="gear-tooth"></div><div class="gear-tooth"></div>
+            <div class="gear-tooth"></div><div class="gear-tooth"></div><div class="gear-tooth"></div>
+        </div>
+        <div class="piston" id="piston1"></div>
+        <div class="piston" id="piston2"></div>
+        <div class="engine-block" id="engine1"></div>
+        <div class="engine-block" id="engine2"></div>
+        <div class="pipe" id="pipe1"></div>
+        <div class="pipe" id="pipe2"></div>
+    </div>
+    
+    <!-- Контейнер для всплывающих сообщений об ошибках -->
+    <div class="error-container" id="errorContainer"></div>
+    
+    <div class="container">
+        <div class="header">
+            <div class="header-icon">
+                <i class="fas fa-cogs"></i>
+            </div>
+            <h1>ГАЗ</h1>
+            <p>Вход в систему управления запчастями</p>
+        </div>
+        
+        <div class="pages-container">
+            <!-- Форма входа -->
+            <div class="page login" id="loginPage">
+                <div class="page-title">
+                    <div class="title-icon">
+                        <i class="fas fa-sign-in-alt"></i>
+                    </div>
+                    <h2>Авторизация оператора</h2>
+                    <p>Войдите для управления запчастями</p>
+                </div>
+                
+                <!-- Проверка наличия ошибки из FastAPI -->
+                {% if error %}
+                <div class="error-popup" style="display: block; margin-bottom: 20px;">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <div class="error-popup-content">
+                        <h4>Ошибка авторизации</h4>
+                        <p>{{ error }}</p>
+                    </div>
+                </div>
+                {% endif %}
+                
+                <!-- Форма с action на правильный эндпоинт -->
+                <form method="POST" action="/login" id="loginForm">
+                    <div class="form-group">
+                        <label for="loginEmail">
+                            <i class="fas fa-at"></i> Технический email
+                        </label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-envelope"></i>
+                            <input type="email" id="loginEmail" name="email" 
+                                   placeholder="operator@gaz-project.com" required
+                                   value="{{ email if email else '' }}">
+                            <div class="error-message" id="loginEmailError"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="loginPassword">
+                            <i class="fas fa-key"></i> Пароль
+                        </label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" id="loginPassword" name="password" 
+                                   placeholder="Введите ваш пароль" required>
+                            <span class="password-toggle" id="loginPasswordToggle">
+                                <i class="fas fa-eye"></i>
+                            </span>
+                            <div class="error-message" id="loginPasswordError"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-options">
+                        <div class="checkbox-container">
+                            <input type="checkbox" id="rememberMe" name="remember" checked>
+                            <label for="rememberMe">
+                                <i class="fas fa-history"></i> Запомнить на этом терминале
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn">
+                        <i class="fas fa-play-circle"></i> Запустить систему
+                    </button>
+                    
+                    <div class="links">
+                        <p>Нет доступа? <a href="/register" id="goToRegister">
+                            <i class="fas fa-user-plus"></i> Авторизоваться
+                        </a></p>
+                    </div>
+                    
+                    <div class="login-hint">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <span>Доступ только для авторизованного персонала</span>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <div class="footer-icons">
+                <i class="fas fa-cog"></i>
+                <i class="fas fa-industry"></i>
+                <i class="fas fa-tools"></i>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Дополнительный JS для страницы логина
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('Login page loaded');
+        
+        // Добавьте здесь специфичный для логина JavaScript
+    });
+</script>
+{% endblock %}
