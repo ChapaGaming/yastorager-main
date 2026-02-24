@@ -1,3 +1,4 @@
+from __future__ import annotations
 from fastapi import FastAPI, Request, Depends, Form, Response, HTTPException
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -715,4 +716,5 @@ if __name__ == "__main__":
     host = "0.0.0.0" if IS_PRODUCTION else "127.0.0.1"
     
     print(f"🌐 Сервер запускается на {host}:{port}")
+
     uvicorn.run(app, host=host, port=port)
