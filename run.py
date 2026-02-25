@@ -1,16 +1,17 @@
 from __future__ import annotations
-from fastapi import FastAPI, Request, Depends, Form, Response, HTTPException
+from fastapi import FastAPI, Request, Depends, Form, Response
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse
+from fastapi.responses import HTMLResponse, RedirectResponse
 from sqlmodel import SQLModel, Field, select, Relationship
+from sqlalchemy import Column, Integer, ForeignKey  # 👈 для ondelete
+from sqlalchemy.orm import Mapped  # 👈 для relationship
 from contextlib import asynccontextmanager
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker, selectinload
-from sqlalchemy import Column, Integer, ForeignKey
 from typing import Optional, Annotated, List
 from fastapi.middleware.cors import CORSMiddleware
-from datetime import datetime, time, timedelta, date
+from datetime import datetime, timedelta
 import os
 import hashlib
 import jwt
@@ -57,7 +58,9 @@ class Users(SQLModel, table=True):
     email: str = Field(unique=True, index=True)
     hashed_password: str
     admin: bool = Field(default=False)
-    promises: List["Promises"] = Relationship(back_populates="owner")
+    
+    # ✅ ИСПРАВЛЕНО
+    promises: Mapped[List["Promises"]] = Relationship(back_populates="owner")
 
 class Things(SQLModel, table=True):
     __tablename__ = "things"
@@ -67,7 +70,9 @@ class Things(SQLModel, table=True):
     amount: int
     buy_cost: float
     kind: str
-    requests: List["Promises"] = Relationship(back_populates="thing")
+    
+    # ✅ ИСПРАВЛЕНО
+    requests: Mapped[List["Promises"]] = Relationship(back_populates="thing")
 
 class Promises(SQLModel, table=True):
     __tablename__ = "promises"
@@ -92,7 +97,7 @@ class Promises(SQLModel, table=True):
     old_buy_cost: Optional[float] = Field(default=None)
     old_kind: Optional[str] = Field(default=None)
 
-    # ✅ ПРАВИЛЬНО: ondelete внутри ForeignKey
+    # ✅ Внешние ключи (уже исправлено)
     user_id: Optional[int] = Field(
         default=None, 
         sa_column=Column(Integer, ForeignKey("users.id", ondelete="CASCADE"))
@@ -102,6 +107,7 @@ class Promises(SQLModel, table=True):
         sa_column=Column(Integer, ForeignKey("things.id", ondelete="CASCADE"))
     )
     
+    # ✅ Relationship (можно оставить как есть, но для единообразия добавим тип)
     owner: Optional["Users"] = Relationship(back_populates="promises")
     thing: Optional["Things"] = Relationship(back_populates="requests")
 
@@ -666,5 +672,6 @@ if __name__ == "__main__":
     print(f"🌐 Сервер запускается на {host}:{port}")
 
     uvicorn.run(app, host=host, port=port)
+
 
 
