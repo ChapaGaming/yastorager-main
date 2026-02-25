@@ -9,7 +9,7 @@ from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker, selectinload
 from typing import Optional, Annotated, List
 from fastapi.middleware.cors import CORSMiddleware
-from datetime import datetime,time,timedelta,date
+from datetime import datetime, time, timedelta, date
 import os
 import hashlib
 import jwt
@@ -25,7 +25,7 @@ config = dotenv_values(".env")
 # Для Render используем переменные окружения напрямую
 if IS_PRODUCTION:
     config = {
-        "DATABASE_URL": os.getenv("DATABASE_URL"),
+        "DATABASE_URL": os.getenv("DATABASE_URL", "sqlite+aiosqlite:///./database.db"),
         "SECRET_KEY": os.getenv("SECRET_KEY"),
         "JWT_CODER": os.getenv("JWT_CODER", "HS256"),
         "REGISTER_KEY": os.getenv("REGISTER_KEY")
@@ -34,16 +34,12 @@ if IS_PRODUCTION:
 print(f"🚀 Запуск в {'production' if IS_PRODUCTION else 'development'} режиме")
 print(f"📦 База данных: {config['DATABASE_URL']}")
 
-# Настройка базы данных
-database_url = config["DATABASE_URL"]
+# Настройка базы данных - всегда SQLite с aiosqlite
+database_url = "sqlite+aiosqlite:///./database.db"
 
-# Разные параметры для разных БД
-connect_args = {}
-if database_url.startswith("sqlite"):
-    connect_args = {"check_same_thread": False}
-    print("✅ Используется SQLite")
-else:
-    print(f"✅ Используется {database_url.split('+')[0].split(':')[0]}")
+# Параметры для SQLite
+connect_args = {"check_same_thread": False}
+print("✅ Используется SQLite с aiosqlite")
 
 engine = create_async_engine(
     database_url, 
@@ -132,7 +128,7 @@ origins = [
 ]
 if IS_PRODUCTION:
     # Добавь свой Render URL
-    origins.append("https://gaz-storage.onrender.com/")
+    origins.append("https://gaz-storage.onrender.com")
 
 app.add_middleware(
     CORSMiddleware,
@@ -263,13 +259,12 @@ async def register_page(request: Request):
     return templates.TemplateResponse("register.html", {"request": request})
 
 @app.get("/things", response_class=HTMLResponse)
-async def register_page(request: Request,session: SessionDep):
+async def things_page(request: Request, session: SessionDep):
     statement = select(Things)
-    coroutime = await session.execute(statement)
-    things = coroutime.scalars().all()
+    result = await session.execute(statement)
+    things = result.scalars().all()
     total_value = sum(thing.buy_cost * thing.amount for thing in things)
     if total_value >= 10_000_000:
-
         total_value = str(round(total_value/1_000_000,2))+" млн"
     else:
         total_value = str(round(total_value/1_000,2))+" тыс."
@@ -282,7 +277,7 @@ async def register_page(request: Request,session: SessionDep):
     return RedirectResponse(url="/login", status_code=303)
 
 @app.get("/admin/add", response_class=HTMLResponse)
-async def register_page(request: Request,session: SessionDep):
+async def admin_add_page(request: Request, session: SessionDep):
     auth_data = await authenticate_user(request, "admin_add.html")
     
     if auth_data and auth_data[0]["admin"]:
@@ -291,7 +286,7 @@ async def register_page(request: Request,session: SessionDep):
     return RedirectResponse(url="/login", status_code=303)
 
 @app.get("/admin", response_class=HTMLResponse)
-async def register_page(request: Request,session: SessionDep):
+async def admin_page(request: Request, session: SessionDep):
     auth_data = await authenticate_user(request, "admin.html")
     
     if auth_data and auth_data[0]["admin"]:
@@ -307,6 +302,7 @@ async def login_page(request: Request):
         return RedirectResponse(url="/profile", status_code=303)
     
     return templates.TemplateResponse("login.html", {"request": request})
+
 @app.post("/login")
 async def login_user(
     request: Request,
@@ -338,7 +334,7 @@ async def login_user(
         })
 
 # ДОБАВЛЯЕМ ИМЕНА ЭНДПОИНТАМ ДЛЯ url_for()
-@app.post("/register", name="register_user")  # ← ДОБАВИЛИ name="register_user"
+@app.post("/register", name="register_user")
 async def register(
     request: Request, 
     session: SessionDep, 
@@ -420,21 +416,21 @@ async def menu(request: Request, session: SessionDep, id: int):
     
     return response
 
-@app.post("/admin/add")  # ← ДОБАВИЛИ name="login_user"
-async def login(request: Request, session: SessionDep, name: str = Form(...), description: str = Form(...), amount: int = Form(...), buy_cost: float = Form(...),kind: str = Form(...),):
+@app.post("/admin/add")
+async def admin_add(request: Request, session: SessionDep, name: str = Form(...), description: str = Form(...), amount: int = Form(...), buy_cost: float = Form(...), kind: str = Form(...)):
     
     auth_data = await authenticate_user(request, "admin_add.html")
     
     if auth_data and auth_data[0]["admin"]:
-        thing = Things(name=name,description=description,amount=amount,buy_cost=buy_cost,kind=kind)
+        thing = Things(name=name, description=description, amount=amount, buy_cost=buy_cost, kind=kind)
         session.add(thing)
         await session.commit()
         return auth_data[1]
 
     return RedirectResponse(url="/login", status_code=303)
 
-@app.post("/admin/edit/{id}")  # ← ДОБАВИЛИ name="login_user"
-async def login(request: Request, session: SessionDep,
+@app.post("/admin/edit/{id}")
+async def admin_edit(request: Request, session: SessionDep,
                 id: int,
                 name: str = Form(...),
                 description: str = Form(...),
@@ -459,8 +455,8 @@ async def login(request: Request, session: SessionDep,
 
     return RedirectResponse(url="/login", status_code=303)
 
-@app.post("/operator/edit/{id}")  # ← ДОБАВИЛИ name="login_user"
-async def login(request: Request, session: SessionDep,
+@app.post("/operator/edit/{id}")
+async def operator_edit(request: Request, session: SessionDep,
                 id: int,
                 new_name: str = Form(...),
                 new_description: str = Form(...),
@@ -478,7 +474,7 @@ async def login(request: Request, session: SessionDep,
         thing = await session.get(Things, id)
         user = await session.get(Users, int(auth_data[0]["id"]))
         
-        promise = Promises(owner=user,thing=thing,
+        promise = Promises(owner=user, thing=thing,
                            new_amount=new_amount,
                            new_buy_cost=new_buy_cost,
                            new_kind=new_kind,
@@ -503,7 +499,7 @@ async def login(request: Request, session: SessionDep,
         if thing.buy_cost == promise.new_buy_cost:
             promise.new_buy_cost = None
         if thing.kind == promise.new_kind:
-            promise.new_nnew_kindme = None
+            promise.new_kind = None
 
         session.add(promise)
         await session.commit()
@@ -511,8 +507,8 @@ async def login(request: Request, session: SessionDep,
 
     return RedirectResponse(url="/login", status_code=303)
 
-@app.get("/admin/requests/")  # ← ДОБАВИЛИ name="login_user"
-async def login(request: Request, session: SessionDep):
+@app.get("/admin/requests/")
+async def admin_requests(request: Request, session: SessionDep):
     
     auth_data = await authenticate_user(request, "-1")
     
@@ -527,8 +523,8 @@ async def login(request: Request, session: SessionDep):
 
     return RedirectResponse(url="/login", status_code=303)
 
-@app.get("/operator/requests/")  # ← ДОБАВИЛИ name="login_user"
-async def login(request: Request, session: SessionDep):
+@app.get("/operator/requests/")
+async def operator_requests(request: Request, session: SessionDep):
     
     auth_data = await authenticate_user(request, "-1")
     
@@ -549,34 +545,14 @@ async def login(request: Request, session: SessionDep):
 
     return RedirectResponse(url="/login", status_code=303)
 
-@app.post("/admin/requests/{id}")  # ← ДОБАВИЛИ name="login_user"
-async def login(request: Request, session: SessionDep, id: int, name: str = Form(...), description: str = Form(...), amount: int = Form(...), buy_cost: float = Form(...),kind: str = Form(...),):
-    
-    auth_data = await authenticate_user(request, "-1")
-    
-    if auth_data and auth_data[0]["admin"]:
-        
-        thing = await session.get(Things, id)
-           
-        thing.name = name
-        thing.description = description
-        thing.amount = amount
-        thing.buy_cost = buy_cost
-        thing.kind = kind
-
-        await session.commit()
-        return RedirectResponse(url='/things', status_code=303)
-
-    return RedirectResponse(url="/login", status_code=303)
-
 @app.post("/admin/requests/{id}/reject")  #отказ
-async def decline(request: Request, session: SessionDep,id: int,):
+async def decline(request: Request, session: SessionDep, id: int):
     
     auth_data = await authenticate_user(request, "-1")
     
     if auth_data and auth_data[0]["admin"]:
         
-        promise = await session.get(Promises,id)
+        promise = await session.get(Promises, id)
         promise.status = "Отклонено"
         await session.commit()
         return RedirectResponse(url='/admin/requests', status_code=303)
@@ -610,16 +586,14 @@ async def claim(request: Request, session: SessionDep,
         if thing.name == promise.new_name:
             promise.new_name = None
         if thing.description == promise.new_description:
-            promise.new_name = None
+            promise.new_description = None
         if thing.amount == promise.new_amount:
-            promise.new_name = None
+            promise.new_amount = None
         if thing.buy_cost == promise.new_buy_cost:
-            promise.new_name = None
+            promise.new_buy_cost = None
         if thing.kind == promise.new_kind:
-            promise.new_name = None
+            promise.new_kind = None
 
-
-        
         thing.name = new_name
         thing.description = new_description
         thing.amount = new_amount
@@ -653,32 +627,6 @@ async def delete_item(request: Request, session: SessionDep, id: int):
         return RedirectResponse(url="/things?success=deleted", status_code=303)
 
     return RedirectResponse(url="/login", status_code=303)
-
-@app.post("/admin/add")
-async def login(request: Request, session: SessionDep, email: str = Form(...), password: str = Form(...), remember: str = Form(...)):
-    # Поиск пользователя
-    stmt = select(Users).where(Users.email == email).where(Users.hashed_password == hashing(password))
-    result = await session.execute(stmt)
-    user = result.first()
-    
-    if user:
-        data = {
-            "email": email,
-            "password": hashing(password),
-            "fio": user[0].fio,
-            "admin": user[0].admin,
-            "id": user[0].id
-        }
-        
-        # ✅ Устанавливаем куки в RedirectResponse
-        redirect_response = RedirectResponse(url="/profile", status_code=303)
-        redirect_response = create_tokens(redirect_response, data, save=remember)
-        return redirect_response
-    else:
-        return templates.TemplateResponse("login.html", {
-            "request": request, 
-            "error": "Неверный email или пароль"
-        })
 
 @app.get("/profile", response_class=HTMLResponse)
 async def profile_page(request: Request, session: SessionDep):
