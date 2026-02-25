@@ -59,7 +59,7 @@ class Users(SQLModel, table=True):
     hashed_password: str
     admin: bool = Field(default=False)
     
-    # ✅ ИСПРАВЛЕНО
+    # ✅ ПРАВИЛЬНО: Mapped[List["Promises"]]
     promises: Mapped[List["Promises"]] = Relationship(back_populates="owner")
 
 class Things(SQLModel, table=True):
@@ -71,7 +71,7 @@ class Things(SQLModel, table=True):
     buy_cost: float
     kind: str
     
-    # ✅ ИСПРАВЛЕНО
+    # ✅ ПРАВИЛЬНО: Mapped[List["Promises"]]
     requests: Mapped[List["Promises"]] = Relationship(back_populates="thing")
 
 class Promises(SQLModel, table=True):
@@ -97,7 +97,7 @@ class Promises(SQLModel, table=True):
     old_buy_cost: Optional[float] = Field(default=None)
     old_kind: Optional[str] = Field(default=None)
 
-    # ✅ Внешние ключи (уже исправлено)
+    # ✅ Внешние ключи (исправлено)
     user_id: Optional[int] = Field(
         default=None, 
         sa_column=Column(Integer, ForeignKey("users.id", ondelete="CASCADE"))
@@ -107,9 +107,9 @@ class Promises(SQLModel, table=True):
         sa_column=Column(Integer, ForeignKey("things.id", ondelete="CASCADE"))
     )
     
-    # ✅ Relationship (можно оставить как есть, но для единообразия добавим тип)
-    owner: Optional["Users"] = Relationship(back_populates="promises")
-    thing: Optional["Things"] = Relationship(back_populates="requests")
+    # ✅ ИСПРАВЛЕНО: Добавлен Mapped для owner и thing
+    owner: Mapped[Optional["Users"]] = Relationship(back_populates="promises")
+    thing: Mapped[Optional["Things"]] = Relationship(back_populates="requests")
 
 # Утилиты
 def hashing(text):
@@ -672,6 +672,7 @@ if __name__ == "__main__":
     print(f"🌐 Сервер запускается на {host}:{port}")
 
     uvicorn.run(app, host=host, port=port)
+
 
 
 
