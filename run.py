@@ -94,12 +94,12 @@ class Promises(SQLModel, table=True):
     user_id: Optional[int] = Field(
         default=None, 
         foreign_key="users.id",
-        ondelete="CASCADE"
+        sa_column_kwargs={"ondelete": "CASCADE"}
     )
     thing_id: Optional[int] = Field(
         default=None, 
         foreign_key="things.id",
-        ondelete="CASCADE"
+        sa_column_kwargs={"ondelete": "CASCADE"}
     )
     
     owner: Optional["Users"] = Relationship(back_populates="promises")
@@ -666,3 +666,4 @@ if __name__ == "__main__":
     print(f"🌐 Сервер запускается на {host}:{port}")
 
     uvicorn.run(app, host=host, port=port)
+
