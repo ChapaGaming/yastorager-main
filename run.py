@@ -7,6 +7,7 @@ from sqlmodel import SQLModel, Field, select, Relationship
 from contextlib import asynccontextmanager
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker, selectinload
+from sqlalchemy import Column, Integer, ForeignKey
 from typing import Optional, Annotated, List
 from fastapi.middleware.cors import CORSMiddleware
 from datetime import datetime, time, timedelta, date
@@ -91,15 +92,14 @@ class Promises(SQLModel, table=True):
     old_buy_cost: Optional[float] = Field(default=None)
     old_kind: Optional[str] = Field(default=None)
 
+    # ✅ ПРАВИЛЬНО: ondelete внутри ForeignKey
     user_id: Optional[int] = Field(
         default=None, 
-        foreign_key="users.id",
-        sa_column_kwargs={"ondelete": "CASCADE"}
+        sa_column=Column(Integer, ForeignKey("users.id", ondelete="CASCADE"))
     )
     thing_id: Optional[int] = Field(
         default=None, 
-        foreign_key="things.id",
-        sa_column_kwargs={"ondelete": "CASCADE"}
+        sa_column=Column(Integer, ForeignKey("things.id", ondelete="CASCADE"))
     )
     
     owner: Optional["Users"] = Relationship(back_populates="promises")
@@ -666,4 +666,5 @@ if __name__ == "__main__":
     print(f"🌐 Сервер запускается на {host}:{port}")
 
     uvicorn.run(app, host=host, port=port)
+
 
