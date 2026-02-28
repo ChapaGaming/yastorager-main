@@ -97,12 +97,12 @@ class Promises(SQLModel, table=True):
     user_id: Optional[int] = Field(
     default=None, 
     foreign_key="users.id",
-    sa_column_kwargs={"ondelete": "CASCADE"}
+     #sa_column_kwargs={"ondelete": "CASCADE"}  - нафиг надо, сервак крашимт
     )
     thing_id: Optional[int] = Field(
         default=None, 
         foreign_key="things.id",
-        sa_column_kwargs={"ondelete": "CASCADE"}
+        #sa_column_kwargs={"ondelete": "CASCADE"}
     )
     
     # ✅ ПРАВИЛЬНО
@@ -670,6 +670,7 @@ if __name__ == "__main__":
     print(f"🌐 Сервер запускается на {host}:{port}")
 
     uvicorn.run(app, host=host, port=port)
+
 
 
 
