@@ -58,7 +58,7 @@ class Users(SQLModel, table=True):
     hashed_password: str
     admin: bool = Field(default=False)
  
-    promises: List["Promises"] = Relationship(back_populates="owner")
+    promises: Mapped[List["Promises"]] = Relationship(back_populates="owner")
 
 class Things(SQLModel, table=True):
     __tablename__ = "things"
@@ -69,7 +69,7 @@ class Things(SQLModel, table=True):
     buy_cost: float
     kind: str
     
-    requests: List["Promises"] = Relationship(back_populates="thing")
+    requests: Mapped[List["Promises"]] = Relationship(back_populates="thing")
 
 class Promises(SQLModel, table=True):
     __tablename__ = "promises"
@@ -98,17 +98,17 @@ class Promises(SQLModel, table=True):
     user_id: Optional[int] = Field(
         default=None, 
         foreign_key="users.id",
-        sa_column_kwargs={"ondelete": "CASCADE"}
+        #sa_column_kwargs={"ondelete": "CASCADE"}
     )
     thing_id: Optional[int] = Field(
         default=None, 
         foreign_key="things.id",
-        sa_column_kwargs={"ondelete": "CASCADE"}
+        #sa_column_kwargs={"ondelete": "CASCADE"}
     )
     
     # ✅ ПРАВИЛЬНО
-    owner: Optional["Users"] = Relationship(back_populates="promises")
-    thing: Optional["Things"] = Relationship(back_populates="requests")
+    owner: Mapped[Optional["Users"]] = Relationship(back_populates="promises")
+    thing: Mapped[Optional["Things"]] = Relationship(back_populates="requests")
 
 # Утилиты
 def hashing(text):
@@ -671,6 +671,7 @@ if __name__ == "__main__":
     print(f"🌐 Сервер запускается на {host}:{port}")
 
     uvicorn.run(app, host=host, port=port)
+
 
 
 
