@@ -67,7 +67,7 @@ class Users(SQLModel, table=True):
     hashed_password: str
     admin: bool = Field(default=False)
  
-    promises: List["Promises"] = Relationship(back_populates="owner")
+    user_promises: List["Promises"] = Relationship(back_populates="promise_owner")
 
 class Things(SQLModel, table=True):
     __tablename__ = "things"
@@ -78,7 +78,7 @@ class Things(SQLModel, table=True):
     buy_cost: float
     kind: str
     
-    requests: List["Promises"] = Relationship(back_populates="thing")
+    thing_requests: List["Promises"] = Relationship(back_populates="requested_thing")
 
 class Promises(SQLModel, table=True):
     __tablename__ = "promises"
@@ -116,8 +116,8 @@ class Promises(SQLModel, table=True):
     )
     
     # ✅ ПРАВИЛЬНО
-    owner: Optional["Users"] = Relationship(back_populates="promises")
-    thing: Optional["Things"] = Relationship(back_populates="requests")
+    promise_owner: Optional["Users"] = Relationship(back_populates="user_promises")
+    requested_thing: Optional["Things"] = Relationship(back_populates="thing_requests")
 
 # Утилиты
 def hashing(text):
@@ -488,7 +488,7 @@ async def operator_edit(request: Request, session: SessionDep,
         thing = await session.get(Things, id)
         user = await session.get(Users, int(auth_data[0]["id"]))
         
-        promise = Promises(owner=user, thing=thing,
+        promise = Promises(promise_owner=user, promise_thing=thing,
                            new_amount=new_amount,
                            new_buy_cost=new_buy_cost,
                            new_kind=new_kind,
@@ -680,14 +680,3 @@ if __name__ == "__main__":
     print(f"🌐 Сервер запускается на {host}:{port}")
 
     uvicorn.run(app, host=host, port=port)
-
-
-
-
-
-
-
-
-
-
-
