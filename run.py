@@ -57,7 +57,7 @@ class Users(SQLModel, table=True):
     email: str = Field(unique=True, index=True)
     hashed_password: str
     admin: bool = Field(default=False)
-    # ✅ ПРАВИЛЬНО: без лишних кавычек вокруг List
+ 
     promises: List["Promises"] = Relationship(back_populates="owner")
 
 class Things(SQLModel, table=True):
@@ -68,7 +68,7 @@ class Things(SQLModel, table=True):
     amount: int
     buy_cost: float
     kind: str
-    # ✅ ПРАВИЛЬНО
+    
     requests: List["Promises"] = Relationship(back_populates="thing")
 
 class Promises(SQLModel, table=True):
@@ -95,14 +95,14 @@ class Promises(SQLModel, table=True):
     old_kind: Optional[str] = Field(default=None)
 
     user_id: Optional[int] = Field(
-        default=None, 
-        foreign_key="users.id",
-        ondelete="CASCADE"
+    default=None, 
+    foreign_key="users.id",
+    sa_column_kwargs={"ondelete": "CASCADE"}
     )
     thing_id: Optional[int] = Field(
         default=None, 
         foreign_key="things.id",
-        ondelete="CASCADE"
+        sa_column_kwargs={"ondelete": "CASCADE"}
     )
     
     # ✅ ПРАВИЛЬНО
@@ -670,6 +670,7 @@ if __name__ == "__main__":
     print(f"🌐 Сервер запускается на {host}:{port}")
 
     uvicorn.run(app, host=host, port=port)
+
 
 
 
