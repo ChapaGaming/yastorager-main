@@ -94,15 +94,16 @@ class Promises(SQLModel, table=True):
     old_buy_cost: Optional[float] = Field(default=None)
     old_kind: Optional[str] = Field(default=None)
 
+    # ✅ ИСПРАВЛЕНО (Вариант 1)
     user_id: Optional[int] = Field(
-    default=None, 
-    foreign_key="users.id",
-     #sa_column_kwargs={"ondelete": "CASCADE"}  - нафиг надо, сервак крашимт
+        default=None, 
+        foreign_key="users.id",
+        sa_column_kwargs={"ondelete": "CASCADE"}
     )
     thing_id: Optional[int] = Field(
         default=None, 
         foreign_key="things.id",
-        #sa_column_kwargs={"ondelete": "CASCADE"}
+        sa_column_kwargs={"ondelete": "CASCADE"}
     )
     
     # ✅ ПРАВИЛЬНО
@@ -670,6 +671,7 @@ if __name__ == "__main__":
     print(f"🌐 Сервер запускается на {host}:{port}")
 
     uvicorn.run(app, host=host, port=port)
+
 
 
 
