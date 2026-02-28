@@ -50,6 +50,15 @@ engine = create_async_engine(
 )
 AsyncSessionLocal = sessionmaker(bind=engine, class_=AsyncSession, expire_on_commit=False)
 
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    # Это поможет IDE и, в некоторых случаях, рантайму
+    pass
+
+_Promises = "Promises"
+_Users = "Users"
+_Things = "Things"
+
 class Users(SQLModel, table=True):
     __tablename__ = "users"
     id: Optional[int] = Field(default=None, primary_key=True)
@@ -671,6 +680,7 @@ if __name__ == "__main__":
     print(f"🌐 Сервер запускается на {host}:{port}")
 
     uvicorn.run(app, host=host, port=port)
+
 
 
 
