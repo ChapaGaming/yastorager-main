@@ -50,7 +50,6 @@ engine = create_async_engine(
 )
 AsyncSessionLocal = sessionmaker(bind=engine, class_=AsyncSession, expire_on_commit=False)
 
-# Модель пользователя
 class Users(SQLModel, table=True):
     __tablename__ = "users"
     id: Optional[int] = Field(default=None, primary_key=True)
@@ -58,9 +57,8 @@ class Users(SQLModel, table=True):
     email: str = Field(unique=True, index=True)
     hashed_password: str
     admin: bool = Field(default=False)
-    
-    # ✅ ПРАВИЛЬНО: Mapped[List["Promises"]]
-    promises: Mapped[List["Promises"]] = Relationship(back_populates="owner")
+    # ✅ ПРАВИЛЬНО: без лишних кавычек вокруг List
+    promises: List["Promises"] = Relationship(back_populates="owner")
 
 class Things(SQLModel, table=True):
     __tablename__ = "things"
@@ -70,9 +68,8 @@ class Things(SQLModel, table=True):
     amount: int
     buy_cost: float
     kind: str
-    
-    # ✅ ПРАВИЛЬНО: Mapped[List["Promises"]]
-    requests: Mapped[List["Promises"]] = Relationship(back_populates="thing")
+    # ✅ ПРАВИЛЬНО
+    requests: List["Promises"] = Relationship(back_populates="thing")
 
 class Promises(SQLModel, table=True):
     __tablename__ = "promises"
@@ -97,19 +94,20 @@ class Promises(SQLModel, table=True):
     old_buy_cost: Optional[float] = Field(default=None)
     old_kind: Optional[str] = Field(default=None)
 
-    # ✅ Внешние ключи (исправлено)
     user_id: Optional[int] = Field(
         default=None, 
-        sa_column=Column(Integer, ForeignKey("users.id", ondelete="CASCADE"))
+        foreign_key="users.id",
+        ondelete="CASCADE"
     )
     thing_id: Optional[int] = Field(
         default=None, 
-        sa_column=Column(Integer, ForeignKey("things.id", ondelete="CASCADE"))
+        foreign_key="things.id",
+        ondelete="CASCADE"
     )
     
-    # ✅ ИСПРАВЛЕНО: Добавлен Mapped для owner и thing
-    owner: Mapped[Optional["Users"]] = Relationship(back_populates="promises")
-    thing: Mapped[Optional["Things"]] = Relationship(back_populates="requests")
+    # ✅ ПРАВИЛЬНО
+    owner: Optional["Users"] = Relationship(back_populates="promises")
+    thing: Optional["Things"] = Relationship(back_populates="requests")
 
 # Утилиты
 def hashing(text):
@@ -672,6 +670,7 @@ if __name__ == "__main__":
     print(f"🌐 Сервер запускается на {host}:{port}")
 
     uvicorn.run(app, host=host, port=port)
+
 
 
 
