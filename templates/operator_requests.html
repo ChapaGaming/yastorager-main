@@ -951,7 +951,7 @@
                                     <div class="info-row">
                                         <i class="fas fa-box"></i>
                                         <strong>Товар:</strong> 
-                                        <a href="/edit/{{ request.requested_thing.id }}">{{ request.requested_thing.name }} (ID: {{ request.requested_thing.id }})</a>
+                                        <a href="/edit/{{ request.requested_thing.id }}">{{ request.old_name }} (ID: {{ request.requested_thing.id }})</a>
                                     </div>
                                     {% if request.message %}
                                     <div class="info-row">
@@ -971,47 +971,47 @@
                                         <th>Текущее значение</th>
                                         <th>Предложенное</th>
                                     </tr>
-                                    {% if request.new_name and request.new_name != request.requested_thing.name %}
+                                    {% if request.new_name and request.new_name != request.old_name %}
                                     <tr class="changed-row">
                                         <td>Наименование</td>
-                                        <td class="current-value changed">{{ request.requested_thing.name }}</td>
+                                        <td class="current-value changed">{{ request.old_name }}</td>
                                         <td class="new-value changed">{{ request.new_name }}</td>
                                     </tr>
                                     {% endif %}
                                     
-                                    {% if request.new_description and request.new_description != request.requested_thing.description %}
+                                    {% if request.new_description and request.new_description != request.old_description %}
                                     <tr class="changed-row">
                                         <td>Индикаторный номер</td>
-                                        <td class="current-value changed">{{ request.requested_thing.description }}</td>
+                                        <td class="current-value changed">{{ request.old_description }}</td>
                                         <td class="new-value changed">{{ request.new_description }}</td>
                                     </tr>
                                     {% endif %}
                                     
-                                    {% if request.new_amount and request.new_amount != request.requested_thing.amount %}
+                                    {% if request.new_amount and request.new_amount != request.old_amount %}
                                     <tr class="changed-row">
                                         <td>Количество</td>
-                                        <td class="current-value changed">{{ request.requested_thing.amount }}</td>
+                                        <td class="current-value changed">{{ request.old_amount }}</td>
                                         <td class="new-value changed">{{ request.new_amount }}</td>
                                     </tr>
                                     {% endif %}
                                     
-                                    {% if request.new_buy_cost and request.new_buy_cost != request.requested_thing.buy_cost %}
+                                    {% if request.new_buy_cost and request.new_buy_cost != request.old_buy_cost %}
                                     <tr class="changed-row">
                                         <td>Цена закупки</td>
-                                        <td class="current-value changed">{{ request.requested_thing.buy_cost }} ₽</td>
+                                        <td class="current-value changed">{{ request.old_buy_cost }} ₽</td>
                                         <td class="new-value changed">{{ request.new_buy_cost }} ₽</td>
                                     </tr>
                                     {% endif %}
                                     
-                                    {% if request.new_kind and request.new_kind != request.requested_thing.kind %}
+                                    {% if request.new_kind and request.new_kind != request.old_kind %}
                                     <tr class="changed-row">
                                         <td>Категория</td>
                                         <td class="current-value changed">
-                                            {% if request.requested_thing.kind == "engine" %}🔧 Двигатель
-                                            {% elif request.requested_thing.kind == "transmission" %}⚙️ Трансмиссия
-                                            {% elif request.requested_thing.kind == "suspension" %}🛞 Подвеска
-                                            {% elif request.requested_thing.kind == "electrical" %}⚡ Электрика
-                                            {% elif request.requested_thing.kind == "body" %}🚗 Кузов
+                                            {% if request.old_kind == "engine" %}🔧 Двигатель
+                                            {% elif request.old_kind == "transmission" %}⚙️ Трансмиссия
+                                            {% elif request.old_kind == "suspension" %}🛞 Подвеска
+                                            {% elif request.old_kind == "electrical" %}⚡ Электрика
+                                            {% elif request.old_kind == "body" %}🚗 Кузов
                                             {% else %}📦 Другое{% endif %}
                                         </td>
                                         <td class="new-value changed">
