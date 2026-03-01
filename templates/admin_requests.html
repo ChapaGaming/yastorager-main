@@ -986,11 +986,11 @@
                             {% if promise.status == "На рассмотрении" %}
                             <div class="request-actions">
                                 <form method="POST" action="/admin/requests/{{ promise.id }}/approve" style="display: inline;">
-                                    {%if promise.new_name%}<input type="hidden" name = "new_name" value = "{{promise.new_name}}">{% else %}<input type="hidden" name = "new_name">{%endif%}
-                                    {%if promise.new_description%}<input type="hidden" name = "new_description" value = "{{promise.new_description}}">{% else %}<input type="hidden" name = "new_description">{%endif%}
-                                    {%if promise.new_amount%}<input type="hidden" name = "new_amount" value = "{{promise.new_amount}}">{% else %}<input type="hidden" name = "new_amount">{%endif%}
-                                    {%if promise.new_buy_cost%}<input type="hidden" name = "new_buy_cost" value = "{{promise.new_buy_cost}}">{% else %}<input type="hidden" name = "new_buy_cost">{%endif%}
-                                    {%if promise.new_kind%}<input type="hidden" name = "new_kind" value = "{{promise.new_kind}}">{% else %}<input type="hidden" name = "new_kind">{%endif%}
+                                    {%if promise.new_name%}<input type="hidden" name = "new_name" value = "{{promise.new_name}}">{% else %}<input type="hidden" name = "new_name" value = "{{promise.old_name}}">{%endif%}
+                                    {%if promise.new_description%}<input type="hidden" name = "new_description" value = "{{promise.new_description}}">{% else %}<input type="hidden" name = "new_description" value = "{{promise.old_description}}">{%endif%}
+                                    {%if promise.new_amount%}<input type="hidden" name = "new_amount" value = "{{promise.new_amount}}">{% else %}<input type="hidden" name = "new_amount" value = "{{promise.old_amount}}">{%endif%}
+                                    {%if promise.new_buy_cost%}<input type="hidden" name = "new_buy_cost" value = "{{promise.new_buy_cost}}">{% else %}<input type="hidden" name = "new_buy_cost" value = "{{promise.old_buy_cost}}">{%endif%}
+                                    {%if promise.new_kind%}<input type="hidden" name = "new_kind" value = "{{promise.new_kind}}">{% else %}<input type="hidden" name = "new_kind" value = "{{promise.old_kind}}">{%endif%}
 
                                     <button type="submit" class="btn btn-success" onclick="return confirm('Подтвердить изменения?')">
                                         <i class="fas fa-check"></i> Одобрить
@@ -1053,6 +1053,7 @@
     </div>
 
     <script>
+        
         function filterRequests() {
             const statusFilter = document.getElementById('statusFilter').value;
             const priorityFilter = document.getElementById('priorityFilter').value;

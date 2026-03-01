@@ -487,7 +487,7 @@ async def operator_requests(request: Request, session: SessionDep):
         
         stmt = select(Promises)\
         .where(Promises.user_id == auth_data[0]["id"])\
-        .options(selectinload(Promises.thing))\
+        .options(selectinload(Promises.requested_thing))\
         .order_by(Promises.created_at.desc())
     
         result = await session.execute(stmt)
