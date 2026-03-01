@@ -4,8 +4,8 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse, RedirectResponse
 from sqlmodel import SQLModel, Field, select, Relationship
-from sqlalchemy import Column, Integer, ForeignKey  # 👈 для ondelete
-from sqlalchemy.orm import Mapped  # 👈 для relationship
+from sqlalchemy import Column, Integer, ForeignKey
+from sqlalchemy.orm import Mapped
 from contextlib import asynccontextmanager
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker, selectinload
@@ -18,6 +18,16 @@ import jwt
 import asyncio
 from dotenv import load_dotenv, dotenv_values
 
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    # Это поможет IDE и, в некоторых случаях, рантайму
+    pass
+# Но для рантайма на сервере можно попробовать так:
+_Promises = "Promises"
+_Users = "Users"
+_Things = "Things"
+
+from models import Users, Things ,Promises
 # Определяем окружение
 IS_PRODUCTION = os.getenv("RENDER", False)
 
@@ -49,75 +59,6 @@ engine = create_async_engine(
     connect_args=connect_args
 )
 AsyncSessionLocal = sessionmaker(bind=engine, class_=AsyncSession, expire_on_commit=False)
-
-from typing import TYPE_CHECKING
-if TYPE_CHECKING:
-    # Это поможет IDE и, в некоторых случаях, рантайму
-    pass
-
-_Promises = "Promises"
-_Users = "Users"
-_Things = "Things"
-
-class Users(SQLModel, table=True):
-    __tablename__ = "users"
-    id: Optional[int] = Field(default=None, primary_key=True)
-    fio: str = Field(index=True)
-    email: str = Field(unique=True, index=True)
-    hashed_password: str
-    admin: bool = Field(default=False)
- 
-    user_promises: List["Promises"] = Relationship(back_populates="promise_owner")
-
-class Things(SQLModel, table=True):
-    __tablename__ = "things"
-    id: Optional[int] = Field(default=None, primary_key=True)
-    name: str = Field(index=True)
-    description: str = Field(unique=True)
-    amount: int
-    buy_cost: float
-    kind: str
-    
-    thing_requests: List["Promises"] = Relationship(back_populates="requested_thing")
-
-class Promises(SQLModel, table=True):
-    __tablename__ = "promises"
-    id: Optional[int] = Field(default=None, primary_key=True)
-    
-    created_at: Optional[datetime] = Field(default=None)
-    die_at: Optional[datetime] = Field(default=None)
-
-    priority: str = Field(default="Средний")
-    status: str = Field(default="На рассмотрении")
-    message: Optional[str] = Field(default=None)
-
-    new_name: Optional[str] = Field(default=None)
-    new_description: Optional[str] = Field(default=None)
-    new_amount: Optional[int] = Field(default=None)
-    new_buy_cost: Optional[float] = Field(default=None)
-    new_kind: Optional[str] = Field(default=None)
-    
-    old_name: Optional[str] = Field(default=None)
-    old_description: Optional[str] = Field(default=None)
-    old_amount: Optional[int] = Field(default=None)
-    old_buy_cost: Optional[float] = Field(default=None)
-    old_kind: Optional[str] = Field(default=None)
-
-    # ✅ ИСПРАВЛЕНО (Вариант 1)
-    user_id: Optional[int] = Field(
-        default=None, 
-        foreign_key="users.id",
-        #sa_column_kwargs={"ondelete": "CASCADE"}
-    )
-    thing_id: Optional[int] = Field(
-        default=None, 
-        foreign_key="things.id",
-        #sa_column_kwargs={"ondelete": "CASCADE"}
-    )
-    
-    # ✅ ПРАВИЛЬНО
-    promise_owner: Optional["Users"] = Relationship(back_populates="user_promises")
-    requested_thing: Optional["Things"] = Relationship(back_populates="thing_requests")
 
 # Утилиты
 def hashing(text):
