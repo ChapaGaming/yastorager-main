@@ -548,7 +548,7 @@ async def claim(request: Request, session: SessionDep,
     if auth_data and auth_data[0]["admin"]:
 
         stmt = select(Promises).where(Promises.id == id).options(
-            selectinload(Promises.thing)  # жадная загрузка thing
+            selectinload(Promises.requested_thing)  # жадная загрузка thing
         )
         result = await session.execute(stmt)
         promise = result.scalar_one_or_none()
