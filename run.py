@@ -557,7 +557,7 @@ async def claim(request: Request, session: SessionDep,
             return RedirectResponse(url="/admin/requests?error=not_found", status_code=303)
 
         promise.status = "Одобрено"
-        thing = promise.thing
+        thing = promise.requested_thing
         if thing.name == promise.new_name:
             promise.new_name = None
         if thing.description == promise.new_description:
