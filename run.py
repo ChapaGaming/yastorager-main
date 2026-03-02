@@ -54,8 +54,7 @@ connect_args = {"check_same_thread": False}
 print("✅ Используется SQLite с aiosqlite")
 
 engine = create_async_engine(
-    database_url, 
-    echo=not IS_PRODUCTION,  # Отключаем echo в production
+    database_url,  # Отключаем echo в production
     connect_args=connect_args
 )
 AsyncSessionLocal = sessionmaker(bind=engine, class_=AsyncSession, expire_on_commit=False)
@@ -142,6 +141,9 @@ def create_tokens(response: Response, data: dict, save = True) -> Response:
 # Аутентификация
 decoded_access = 0
 async def authenticate_user(request: Request, html: str = "-1", **variables_html):
+    """
+    возвращает при успехе data, response.
+    """
     access_token = request.cookies.get("access")
     
     if access_token:
@@ -205,11 +207,16 @@ async def root(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
 @app.get("/register", response_class=HTMLResponse)
-async def register_page(request: Request):
+async def register_page(request: Request, session: SessionDep):
     auth_data = await authenticate_user(request, "register.html")
     
     if auth_data:
-        return RedirectResponse(url="/profile", status_code=303)
+        data = auth_data[0]
+        user = await session.get(Users, data["id"])
+        if user.email == data["email"] and user.hashed_password == data["password"] and user.fio == data["fio"] and user.admin == data["admin"]:
+            return RedirectResponse(url="/profile", status_code=303)
+        print("У пользователя сомнительные куки")
+        return RedirectResponse(url="/logout", status_code=303)
     
     return templates.TemplateResponse("register.html", {"request": request})
 
@@ -250,11 +257,16 @@ async def admin_page(request: Request, session: SessionDep):
     return RedirectResponse(url="/login", status_code=303)
 
 @app.get("/login", response_class=HTMLResponse)
-async def login_page(request: Request):
+async def login_page(request: Request, session: SessionDep):
     auth_data = await authenticate_user(request, "login.html")
     
     if auth_data:
-        return RedirectResponse(url="/profile", status_code=303)
+        data = auth_data[0]
+        user = await session.get(Users, data["id"])
+        if user.email == data["email"] and user.hashed_password == data["password"] and user.fio == data["fio"] and user.admin == data["admin"]:
+            return RedirectResponse(url="/profile", status_code=303)
+        print("У пользователя сомнительные куки")
+        return RedirectResponse(url="/logout", status_code=303)
     
     return templates.TemplateResponse("login.html", {"request": request})
 
@@ -277,7 +289,7 @@ async def login_user(
             "password": hashing(password),
             "fio": user[0].fio,
             "admin": user[0].admin,
-            "id": user[0].id
+            "id": int(user[0].id)
         }
         redirect_response = RedirectResponse(url="/profile", status_code=303)
         redirect_response = create_tokens(redirect_response, data, save=bool(remember))
@@ -443,7 +455,10 @@ async def operator_edit(request: Request, session: SessionDep,
                            old_buy_cost=thing.buy_cost,
                            old_kind=thing.kind,
                            old_description=thing.description,
-                           old_name=thing.name)
+                           old_name=thing.name,
+                           thing_id=thing.id,
+                           user_id=user.id,
+                           requested_thing=thing)
         
         if thing.name == promise.new_name:
             promise.new_name = None
@@ -468,7 +483,12 @@ async def admin_requests(request: Request, session: SessionDep):
     auth_data = await authenticate_user(request, "-1")
     
     if auth_data and auth_data[0]["admin"]:
-        
+        statement = select(Promises).where(Promises.die_at < datetime.now())
+        result = await session.execute(statement)
+        promises = result.scalars().all()
+        for promise in promises:
+            await session.delete(promise)
+        print("удалены устаревшие данные:", promises)
         statement = select(Promises, Things, Users).where(Promises.user_id == Users.id).where(Promises.thing_id == Things.id)
         result = await session.execute(statement)
         data = result.all()

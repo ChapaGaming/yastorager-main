@@ -938,9 +938,9 @@
                                         {{ request.priority }}
                                     </span>
                                     <span class="status-badge status-{{ request.status }}">
-                                        {% if request.status == "pending" %}⏳ На рассмотрении
-                                        {% elif request.status == "approved" %}✅ Одобрено
-                                        {% elif request.status == "rejected" %}❌ Отклонено
+                                        {% if request.status == "На рассмотрении" %}⏳ На рассмотрении
+                                        {% elif request.status == "Одобрено" %}✅ Одобрено
+                                        {% elif request.status == "Отклонено" %}❌ Отклонено
                                         {% else %}📝 {{ request.status }}{% endif %}
                                     </span>
                                 </div>
@@ -951,7 +951,7 @@
                                     <div class="info-row">
                                         <i class="fas fa-box"></i>
                                         <strong>Товар:</strong> 
-                                        <a href="/edit/{{ request.requested_thing.id }}">{{ request.old_name }} (ID: {{ request.requested_thing.id }})</a>
+                                        <a href="/edit/{{ request.requested_thing.id }}">{{ request.old_name }} (ID: {{ request.thing_id }})</a>
                                     </div>
                                     {% if request.message %}
                                     <div class="info-row">
