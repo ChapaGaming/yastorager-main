@@ -42,7 +42,7 @@ if IS_PRODUCTION:
 print(f"🚀 Запуск в {'production' if IS_PRODUCTION else 'development'} режиме")
 print(f"📦 База данных: {config['DATABASE_URL']}")
 
-# Настройка базы данных
+# Настройка базы данных - определяем тип БД
 database_url = config["DATABASE_URL"]
 
 # Определяем параметры подключения в зависимости от типа БД
@@ -198,11 +198,16 @@ async def root(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
 @app.get("/register", response_class=HTMLResponse)
-async def register_page(request: Request):
+async def register_page(request: Request, session: SessionDep):
     auth_data = await authenticate_user(request, "register.html")
     
     if auth_data:
-        return RedirectResponse(url="/profile", status_code=303)
+        data = auth_data[0]
+        user = await session.get(Users, data["id"])
+        if user and user.email == data["email"] and user.hashed_password == data["password"] and user.fio == data["fio"] and user.admin == data["admin"]:
+            return RedirectResponse(url="/profile", status_code=303)
+        print("У пользователя сомнительные куки")
+        return RedirectResponse(url="/logout", status_code=303)
     
     return templates.TemplateResponse("register.html", {"request": request})
 
@@ -217,7 +222,7 @@ async def things_page(request: Request, session: SessionDep):
     else:
         total_value = str(round(total_value/1_000,2))+" тыс."
     print(things)
-    auth_data = await authenticate_user(request, "things.html", things = things, total_value=total_value)
+    auth_data = await authenticate_user(request, "things.html", things=things, total_value=total_value)
     
     if auth_data:
         return auth_data[1]
@@ -243,11 +248,16 @@ async def admin_page(request: Request, session: SessionDep):
     return RedirectResponse(url="/login", status_code=303)
 
 @app.get("/login", response_class=HTMLResponse)
-async def login_page(request: Request):
+async def login_page(request: Request, session: SessionDep):
     auth_data = await authenticate_user(request, "login.html")
     
     if auth_data:
-        return RedirectResponse(url="/profile", status_code=303)
+        data = auth_data[0]
+        user = await session.get(Users, data["id"])
+        if user and user.email == data["email"] and user.hashed_password == data["password"] and user.fio == data["fio"] and user.admin == data["admin"]:
+            return RedirectResponse(url="/profile", status_code=303)
+        print("У пользователя сомнительные куки")
+        return RedirectResponse(url="/logout", status_code=303)
     
     return templates.TemplateResponse("login.html", {"request": request})
 
@@ -321,7 +331,7 @@ async def register(
     await session.commit()
     print("✅ Пользователь создан")
     
-    data = {"email": email, "password": hashed_pass, "fio": fio,"admin": new_user.admin, "id": new_user.id}
+    data = {"email": email, "password": hashed_pass, "fio": fio, "admin": new_user.admin, "id": new_user.id}
     
     redirect_response = RedirectResponse(url="/profile", status_code=303)
     redirect_response = create_tokens(redirect_response, data)
@@ -355,7 +365,12 @@ async def menu(request: Request, session: SessionDep, id: int):
     return response
 
 @app.post("/admin/add")
-async def admin_add(request: Request, session: SessionDep, name: str = Form(...), description: str = Form(...), amount: int = Form(...), buy_cost: float = Form(...), kind: str = Form(...)):
+async def admin_add(request: Request, session: SessionDep, 
+                   name: str = Form(...), 
+                   description: str = Form(...), 
+                   amount: int = Form(...), 
+                   buy_cost: float = Form(...), 
+                   kind: str = Form(...)):
     
     auth_data = await authenticate_user(request, "admin_add.html")
     
@@ -381,6 +396,8 @@ async def admin_edit(request: Request, session: SessionDep,
     if auth_data and auth_data[0]["admin"]:
         
         thing = await session.get(Things, id)
+        if not thing:
+            return RedirectResponse(url="/things?error=not_found", status_code=303)
            
         thing.name = name
         thing.description = description
@@ -412,6 +429,9 @@ async def operator_edit(request: Request, session: SessionDep,
         thing = await session.get(Things, id)
         user = await session.get(Users, int(auth_data[0]["id"]))
         
+        if not thing or not user:
+            return RedirectResponse(url="/things?error=not_found", status_code=303)
+        
         promise = Promises(promise_owner=user, requested_thing=thing,
                            new_amount=new_amount,
                            new_buy_cost=new_buy_cost,
@@ -426,7 +446,9 @@ async def operator_edit(request: Request, session: SessionDep,
                            old_buy_cost=thing.buy_cost,
                            old_kind=thing.kind,
                            old_description=thing.description,
-                           old_name=thing.name)
+                           old_name=thing.name,
+                           thing_id=thing.id,
+                           user_id=user.id)
         
         if thing.name == promise.new_name:
             promise.new_name = None
@@ -438,10 +460,31 @@ async def operator_edit(request: Request, session: SessionDep,
             promise.new_buy_cost = None
         if thing.kind == promise.new_kind:
             promise.new_kind = None
-
-        session.add(promise)
-        await session.commit()
-        return RedirectResponse(url='/things', status_code=303)
+            
+        # Проверка на дубликаты
+        stmt = select(Promises).where(
+            Promises.new_name == promise.new_name,
+            Promises.new_description == promise.new_description,
+            Promises.new_amount == promise.new_amount,
+            Promises.new_buy_cost == promise.new_buy_cost,
+            Promises.new_kind == promise.new_kind,
+            Promises.thing_id == thing.id,
+            Promises.user_id == user.id
+        )
+        result = await session.execute(stmt)
+        copy = result.scalar_one_or_none()
+        
+        if copy is None:
+            session.add(promise)
+            await session.commit()
+            return RedirectResponse(url='/things', status_code=303)
+        
+        return templates.TemplateResponse("edit.html", {
+            "request": request,
+            "user": auth_data[0],
+            "thing": thing,
+            "error": "Такая заявка уже существует"
+        })
 
     return RedirectResponse(url="/login", status_code=303)
 
@@ -451,13 +494,28 @@ async def admin_requests(request: Request, session: SessionDep):
     auth_data = await authenticate_user(request, "-1")
     
     if auth_data and auth_data[0]["admin"]:
+        # Удаляем устаревшие заявки
+        stmt = select(Promises).where(Promises.die_at < datetime.now())
+        result = await session.execute(stmt)
+        expired_promises = result.scalars().all()
+        for promise in expired_promises:
+            await session.delete(promise)
+        if expired_promises:
+            print("Удалены устаревшие данные:", len(expired_promises))
         
-        statement = select(Promises, Things, Users).where(Promises.user_id == Users.id).where(Promises.thing_id == Things.id)
+        # Получаем актуальные заявки
+        statement = select(Promises, Things, Users).where(
+            Promises.user_id == Users.id,
+            Promises.thing_id == Things.id
+        )
         result = await session.execute(statement)
         data = result.all()
-        auth_data = await authenticate_user(request, "admin_requests.html", data=data)
+        
         await session.commit()
-        return auth_data[1]
+        
+        auth_response = await authenticate_user(request, "admin_requests.html", data=data)
+        if auth_response:
+            return auth_response[1]
 
     return RedirectResponse(url="/login", status_code=303)
 
@@ -476,10 +534,11 @@ async def operator_requests(request: Request, session: SessionDep):
         result = await session.execute(stmt)
         promises = result.scalars().all()
         
-        auth_data = await authenticate_user(request, "operator_requests.html", promises=promises)
+        auth_response = await authenticate_user(request, "operator_requests.html", promises=promises)
 
         await session.commit()
-        return auth_data[1]
+        if auth_response:
+            return auth_response[1]
 
     return RedirectResponse(url="/login", status_code=303)
 
@@ -491,8 +550,9 @@ async def decline(request: Request, session: SessionDep, id: int):
     if auth_data and auth_data[0]["admin"]:
         
         promise = await session.get(Promises, id)
-        promise.status = "Отклонено"
-        await session.commit()
+        if promise:
+            promise.status = "Отклонено"
+            await session.commit()
         return RedirectResponse(url='/admin/requests', status_code=303)
 
     return RedirectResponse(url="/login", status_code=303)
@@ -521,6 +581,9 @@ async def claim(request: Request, session: SessionDep,
 
         promise.status = "Одобрено"
         thing = promise.requested_thing
+        if not thing:
+            return RedirectResponse(url="/admin/requests?error=thing_not_found", status_code=303)
+            
         if thing.name == promise.new_name:
             promise.new_name = None
         if thing.description == promise.new_description:
@@ -583,7 +646,7 @@ async def my_cookies(request: Request):
 
 @app.get("/logout")
 async def logout(response: Response):
-    print("❌Пользователь вышел")
+    print("❌ Пользователь вышел")
     new_r = RedirectResponse(url="/")
     new_r.delete_cookie(key="access")
     new_r.delete_cookie(key="refresh")
@@ -597,7 +660,5 @@ if __name__ == "__main__":
     host = "0.0.0.0" if IS_PRODUCTION else "127.0.0.1"
     
     print(f"🌐 Сервер запускается на {host}:{port}")
-
-    uvicorn.run(app, host=host, port=port)
 
     uvicorn.run(app, host=host, port=port)

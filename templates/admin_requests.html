@@ -337,29 +337,84 @@
             }
         }
 
-        /* ========== ФИЛЬТРЫ ========== */
-        .filters-bar {
+        /* ========== УЛУЧШЕННЫЕ ФИЛЬТРЫ ========== */
+        .filters-section {
             background: var(--bg-color);
-            border-radius: 8px;
+            border-radius: 12px;
             padding: 20px;
-            margin-bottom: 20px;
-            display: flex;
-            gap: 20px;
-            flex-wrap: wrap;
-            align-items: flex-end;
+            margin-bottom: 25px;
             border: 1px solid var(--border-color);
         }
 
+        .filters-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .filters-header h3 {
+            color: var(--text-color);
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .filters-header h3 i {
+            color: var(--primary-color);
+        }
+
+        .filter-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-clear-filters {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-clear-filters:hover {
+            background: rgba(239, 68, 68, 0.1);
+            border-color: var(--danger-color);
+            color: var(--danger-color);
+        }
+
+        .filters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
         .filter-group {
-            flex: 1;
-            min-width: 200px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
         }
 
         .filter-group label {
-            display: block;
-            margin-bottom: 5px;
             color: var(--text-secondary);
-            font-size: 0.9rem;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .filter-group label i {
+            color: var(--primary-color);
+            width: 16px;
         }
 
         .filter-group select,
@@ -368,9 +423,10 @@
             padding: 8px 12px;
             background: rgba(0, 0, 0, 0.3);
             border: 1px solid var(--border-color);
-            border-radius: 4px;
+            border-radius: 6px;
             color: var(--text-color);
-            font-size: 0.9rem;
+            font-size: 0.95rem;
+            transition: all 0.2s;
         }
 
         .filter-group select:focus,
@@ -378,6 +434,94 @@
             outline: none;
             border-color: var(--primary-color);
             box-shadow: 0 0 0 2px rgba(167, 139, 250, 0.2);
+        }
+
+        .filter-group select:hover,
+        .filter-group input:hover {
+            border-color: var(--primary-color);
+        }
+
+        .filter-group input::placeholder {
+            color: var(--text-secondary);
+            opacity: 0.5;
+        }
+
+        /* Расширенные опции поиска */
+        .search-options {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .search-radio-group {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .search-radio-label {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+
+        .search-radio-label input[type="radio"] {
+            accent-color: var(--primary-color);
+            width: auto;
+        }
+
+        .active-filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+            min-height: 30px;
+        }
+
+        .filter-tag {
+            background: rgba(167, 139, 250, 0.15);
+            border: 1px solid rgba(167, 139, 250, 0.3);
+            color: var(--primary-color);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .filter-tag i {
+            cursor: pointer;
+            font-size: 0.8rem;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+
+        .filter-tag i:hover {
+            opacity: 1;
+            color: var(--danger-color);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* Статистика фильтрации */
+        .filter-stats {
+            margin: 10px 0;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
         /* ========== КОНТЕЙНЕР ЗАЯВОК ========== */
@@ -497,6 +641,15 @@
             background: rgba(239, 68, 68, 0.1);
             color: #ef4444;
             border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        /* Подсветка при поиске */
+        .highlight {
+            background-color: rgba(167, 139, 250, 0.3);
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-weight: 500;
+            color: var(--primary-color);
         }
 
         /* ========== СОДЕРЖИМОЕ ЗАЯВКИ ========== */
@@ -758,13 +911,16 @@
                 font-size: 1.5rem;
             }
             
-            .filters-bar {
-                flex-direction: column;
-                gap: 15px;
+            .filters-grid {
+                grid-template-columns: 1fr;
             }
             
-            .filter-group {
-                width: 100%;
+            .search-options {
+                flex-direction: column;
+            }
+            
+            .search-radio-group {
+                justify-content: flex-start;
             }
             
             .request-header {
@@ -816,7 +972,7 @@
                         <i class="fas fa-tasks"></i>
                     </div>
                     <h2>Заявки на изменение запчастей</h2>
-                    <p>Всего заявок: {{ data|length }}</p>
+                    <p>Всего заявок: <span id="totalRequests">{{ data|length }}</span></p>
                 </div>
 
                 {% if error %}
@@ -839,40 +995,138 @@
                 </div>
                 {% endif %}
 
-                <!-- Фильтры -->
-                <div class="filters-bar">
-                    <div class="filter-group">
-                        <label>Статус:</label>
-                        <select id="statusFilter" onchange="filterRequests()">
-                            <option value="all">Все заявки</option>
-                            <option value="На рассмотрении">На рассмотрении</option>
-                            <option value="Одобрено">Одобренные</option>
-                            <option value="Отклонено">Отклоненные</option>
-                        </select>
+                <!-- Улучшенная система фильтров -->
+                <div class="filters-section">
+                    <div class="filters-header">
+                        <h3>
+                            <i class="fas fa-filter"></i>
+                            Фильтры
+                        </h3>
+                        <div class="filter-actions">
+                            <button class="btn-clear-filters" onclick="clearAllFilters()">
+                                <i class="fas fa-times"></i>
+                                Сбросить все
+                            </button>
+                        </div>
                     </div>
-                    <div class="filter-group">
-                        <label>Приоритет:</label>
-                        <select id="priorityFilter" onchange="filterRequests()">
-                            <option value="all">Все приоритеты</option>
-                            <option value="Низкий">🟢 Низкий</option>
-                            <option value="Средний">🟡 Средний</option>
-                            <option value="Высокий">🔴 Высокий</option>
-                        </select>
+
+                    <!-- Основные фильтры -->
+                    <div class="filters-grid">
+                        <div class="filter-group">
+                            <label><i class="fas fa-tag"></i> Статус:</label>
+                            <select id="statusFilter" onchange="filterRequests()">
+                                <option value="all">Все статусы</option>
+                                <option value="На рассмотрении">⏳ На рассмотрении</option>
+                                <option value="Одобрено">✅ Одобренные</option>
+                                <option value="Отклонено">❌ Отклоненные</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-group">
+                            <label><i class="fas fa-exclamation-triangle"></i> Приоритет:</label>
+                            <select id="priorityFilter" onchange="filterRequests()">
+                                <option value="all">Все приоритеты</option>
+                                <option value="Низкий">🟢 Низкий</option>
+                                <option value="Средний">🟡 Средний</option>
+                                <option value="Высокий">🔴 Высокий</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-group">
+                            <label><i class="fas fa-user"></i> Оператор:</label>
+                            <select id="operatorFilter" onchange="filterRequests()">
+                                <option value="all">Все операторы</option>
+                                {% set unique_operators = [] %}
+                                {% for item in data %}
+                                    {% set operator_name = item[2].fio %}
+                                    {% if operator_name not in unique_operators %}
+                                        {% if unique_operators.append(operator_name) %}{% endif %}
+                                        <option value="{{ operator_name }}">{{ operator_name }}</option>
+                                    {% endif %}
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="filter-group">
+                            <label><i class="fas fa-calendar"></i> Дата создания:</label>
+                            <select id="dateFilter" onchange="filterRequests()">
+                                <option value="all">За все время</option>
+                                <option value="today">Сегодня</option>
+                                <option value="week">Последние 7 дней</option>
+                                <option value="month">Последние 30 дней</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-group">
+                            <label><i class="fas fa-box"></i> Категория товара:</label>
+                            <select id="categoryFilter" onchange="filterRequests()">
+                                <option value="all">Все категории</option>
+                                <option value="engine">🔧 Двигатель</option>
+                                <option value="transmission">⚙️ Трансмиссия</option>
+                                <option value="suspension">🛞 Подвеска</option>
+                                <option value="electrical">⚡ Электрика</option>
+                                <option value="body">🚗 Кузов</option>
+                                <option value="other">📦 Другое</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-group">
+                            <label><i class="fas fa-hashtag"></i> ID заявки:</label>
+                            <input type="number" id="idFilter" placeholder="Введите ID..." onkeyup="filterRequests()">
+                        </div>
                     </div>
-                    <div class="filter-group">
-                        <label>Поиск:</label>
-                        <input type="text" id="searchInput" placeholder="Введите товар или оператора..." onkeyup="filterRequests()">
+
+                    <!-- Расширенные опции поиска -->
+                    <div class="search-options">
+                        <div class="filter-group" style="flex: 1;">
+                            <label><i class="fas fa-search"></i> Поиск:</label>
+                            <input type="text" id="searchInput" placeholder="Поиск по товару, оператору, комментарию..." onkeyup="filterRequests()">
+                        </div>
+                        
+                        <div class="search-radio-group">
+                            <span class="search-radio-label">
+                                <input type="radio" name="searchMode" value="any" checked onchange="filterRequests()"> 
+                                <i class="fas fa-link"></i> Любое совпадение
+                            </span>
+                            <span class="search-radio-label">
+                                <input type="radio" name="searchMode" value="all" onchange="filterRequests()"> 
+                                <i class="fas fa-tasks"></i> Все слова
+                            </span>
+                            <span class="search-radio-label">
+                                <input type="radio" name="searchMode" value="exact" onchange="filterRequests()"> 
+                                <i class="fas fa-quote-right"></i> Точное совпадение
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Активные фильтры -->
+                    <div class="active-filters" id="activeFilters"></div>
+
+                    <!-- Статистика фильтрации -->
+                    <div class="filter-stats" id="filterStats">
+                        <span>Показано: <span id="displayedCount">{{ data|length }}</span> из {{ data|length }}</span>
                     </div>
                 </div>
 
                 <!-- Список заявок -->
-                <div class="requests-container">
+                <div class="requests-container" id="requestsContainer">
                     {% if data %}
                         {% for item in data %}
                         {% set promise = item[0] %}
                         {% set thing = item[1] %}
                         {% set user = item[2] %}
-                        <div class="request-card" data-status="{{ promise.status }}" data-priority="{{ promise.priority }}">
+                        <div class="request-card" 
+                             data-id="{{ promise.id }}"
+                             data-status="{{ promise.status }}" 
+                             data-priority="{{ promise.priority }}"
+                             data-operator="{{ user.fio }}"
+                             data-category="{{ promise.new_kind if promise.new_kind else promise.old_kind }}"
+                             data-date="{{ promise.created_at.strftime('%Y-%m-%d') }}"
+                             data-item="{{ thing.name }}"
+                             data-message="{{ promise.message or '' }}"
+                             data-search-text="{{ promise.id }} {{ promise.old_name }} {{ promise.new_name or '' }} {{ user.fio }} {{ user.email }} {{ promise.message or '' }} {{ thing.name }} {{ promise.old_description }} {{ promise.new_description or '' }}">
+                            
+                            <!-- Вся остальная разметка карточки остается без изменений -->
                             <div class="request-header">
                                 <div class="request-info">
                                     <span class="request-id">#{{ promise.id }}</span>
@@ -1052,43 +1306,478 @@
         </div>
     </div>
 
-    <script>
+<script>
+    // Функция для получения уникальных операторов из данных
+    function getUniqueOperators() {
+        const cards = document.querySelectorAll('.request-card');
+        const operators = new Set();
         
-        function filterRequests() {
-            const statusFilter = document.getElementById('statusFilter').value;
-            const priorityFilter = document.getElementById('priorityFilter').value;
-            const searchText = document.getElementById('searchInput').value.toLowerCase();
+        cards.forEach(card => {
+            const operator = card.dataset.operator;
+            if (operator) {
+                operators.add(operator);
+            }
+        });
+        
+        return Array.from(operators).sort();
+    }
 
-            const cards = document.querySelectorAll('.request-card');
+    // Функция для обновления списка операторов (на случай динамического изменения)
+    function updateOperatorsFilter() {
+        const operatorFilter = document.getElementById('operatorFilter');
+        if (!operatorFilter) return;
+        
+        const currentValue = operatorFilter.value;
+        const uniqueOperators = getUniqueOperators();
+        
+        // Сохраняем текущий выбранный оператор
+        let selectedValue = currentValue;
+        
+        // Очищаем и обновляем список
+        operatorFilter.innerHTML = '<option value="all">Все операторы</option>';
+        
+        uniqueOperators.forEach(operator => {
+            const option = document.createElement('option');
+            option.value = operator;
+            option.textContent = operator;
+            if (operator === selectedValue) {
+                option.selected = true;
+            }
+            operatorFilter.appendChild(option);
+        });
+        
+        // Если текущий выбранный оператор больше не существует, сбрасываем на "all"
+        if (selectedValue !== 'all' && !uniqueOperators.includes(selectedValue)) {
+            operatorFilter.value = 'all';
+        }
+    }
 
-            cards.forEach(card => {
-                const status = card.dataset.status;
-                const priority = card.dataset.priority;
-                const cardText = card.textContent.toLowerCase();
+    // Основная функция фильтрации
+    function filterRequests() {
+        const statusFilter = document.getElementById('statusFilter').value;
+        const priorityFilter = document.getElementById('priorityFilter').value;
+        const operatorFilter = document.getElementById('operatorFilter').value;
+        const dateFilter = document.getElementById('dateFilter').value;
+        const categoryFilter = document.getElementById('categoryFilter').value;
+        const idFilter = document.getElementById('idFilter').value;
+        const searchText = document.getElementById('searchInput').value.trim().toLowerCase();
+        
+        // Получаем выбранный режим поиска
+        const searchMode = document.querySelector('input[name="searchMode"]:checked')?.value || 'any';
 
-                let statusMatch = statusFilter === 'all' || status === statusFilter;
-                let priorityMatch = priorityFilter === 'all' || priority === priorityFilter;
-                let searchMatch = searchText === '' || cardText.includes(searchText);
+        const cards = document.querySelectorAll('.request-card');
+        let visibleCount = 0;
+        let visibleOperators = new Set(); // Для сбора операторов из видимых карточек
 
-                if (statusMatch && priorityMatch && searchMatch) {
-                    card.style.display = 'block';
+        cards.forEach(card => {
+            const status = card.dataset.status;
+            const priority = card.dataset.priority;
+            const operator = card.dataset.operator;
+            const category = card.dataset.category;
+            const cardId = card.dataset.id;
+            const cardDate = new Date(card.dataset.date);
+            const searchTextAttr = card.dataset.searchText.toLowerCase();
+
+            // Фильтр по статусу
+            let statusMatch = statusFilter === 'all' || status === statusFilter;
+
+            // Фильтр по приоритету
+            let priorityMatch = priorityFilter === 'all' || priority === priorityFilter;
+
+            // Фильтр по оператору
+            let operatorMatch = operatorFilter === 'all' || operator === operatorFilter;
+
+            // Фильтр по категории
+            let categoryMatch = categoryFilter === 'all' || category === categoryFilter;
+
+            // Фильтр по ID
+            let idMatch = idFilter === '' || cardId === idFilter;
+
+            // Фильтр по дате
+            let dateMatch = true;
+            if (dateFilter !== 'all') {
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                
+                if (dateFilter === 'today') {
+                    dateMatch = cardDate.toDateString() === today.toDateString();
+                } else if (dateFilter === 'week') {
+                    const weekAgo = new Date(today);
+                    weekAgo.setDate(weekAgo.getDate() - 7);
+                    dateMatch = cardDate >= weekAgo;
+                } else if (dateFilter === 'month') {
+                    const monthAgo = new Date(today);
+                    monthAgo.setMonth(monthAgo.getMonth() - 1);
+                    dateMatch = cardDate >= monthAgo;
+                }
+            }
+
+            // Поиск по тексту
+            let searchMatch = true;
+            if (searchText !== '') {
+                if (searchMode === 'exact') {
+                    // Точное совпадение
+                    searchMatch = searchTextAttr === searchText;
+                } else if (searchMode === 'all') {
+                    // Все слова должны присутствовать
+                    const words = searchText.split(/\s+/);
+                    searchMatch = words.every(word => searchTextAttr.includes(word));
                 } else {
-                    card.style.display = 'none';
+                    // Любое слово (по умолчанию)
+                    const words = searchText.split(/\s+/);
+                    searchMatch = words.some(word => searchTextAttr.includes(word));
+                }
+            }
+
+            // Комбинируем все фильтры
+            const shouldShow = statusMatch && priorityMatch && operatorMatch && 
+                              dateMatch && categoryMatch && idMatch && searchMatch;
+
+            if (shouldShow) {
+                card.style.display = 'block';
+                visibleCount++;
+                visibleOperators.add(operator); // Добавляем оператора из видимой карточки
+                
+                // Подсвечиваем найденный текст
+                if (searchText !== '') {
+                    highlightText(card, searchText);
+                } else {
+                    removeHighlight(card);
+                }
+            } else {
+                card.style.display = 'none';
+                removeHighlight(card);
+            }
+        });
+
+        // Обновляем статистику
+        document.getElementById('displayedCount').textContent = visibleCount;
+        
+        // Обновляем активные фильтры
+        updateActiveFilters();
+        
+        // Обновляем список операторов (опционально - можно закомментировать если не нужно)
+        // updateOperatorsFilter();
+        
+        // Показываем пустое состояние, если нет результатов
+        showEmptyState(visibleCount === 0);
+        
+        // Возвращаем количество видимых для использования в других функциях
+        return visibleCount;
+    }
+
+    // Функция для подсветки текста
+    function highlightText(card, searchText) {
+        removeHighlight(card);
+        
+        const words = searchText.split(/\s+/).filter(word => word.length > 1);
+        if (words.length === 0) return;
+        
+        // Ищем элементы, которые могут содержать текст
+        const textElements = card.querySelectorAll('.info-row, .request-id, .request-date, .changes-table td, .request-item-info, .priority-badge, .status-badge');
+        
+        textElements.forEach(element => {
+            // Сохраняем оригинальный HTML, но заменяем только текст
+            let html = element.innerHTML;
+            words.forEach(word => {
+                try {
+                    // Экранируем специальные символы в слове
+                    const escapedWord = word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                    // Создаем регулярное выражение для поиска слова, но не внутри тегов
+                    const regex = new RegExp(`(${escapedWord})`, 'gi');
+                    html = html.replace(/(>)([^<]+)(?=<|$)/g, (match, p1, p2) => {
+                        return p1 + p2.replace(regex, '<span class="highlight">$1</span>');
+                    });
+                } catch (e) {
+                    console.log('Ошибка в регулярном выражении для слова:', word);
                 }
             });
+            element.innerHTML = html;
+        });
+    }
+
+    // Функция для удаления подсветки
+    function removeHighlight(card) {
+        const highlights = card.querySelectorAll('.highlight');
+        highlights.forEach(el => {
+            const parent = el.parentNode;
+            parent.replaceChild(document.createTextNode(el.textContent), el);
+            parent.normalize();
+        });
+    }
+
+    // Функция для обновления отображения активных фильтров
+    function updateActiveFilters() {
+        const filters = [
+            { id: 'statusFilter', name: 'Статус', value: getSelectDisplayValue('statusFilter') },
+            { id: 'priorityFilter', name: 'Приоритет', value: getSelectDisplayValue('priorityFilter') },
+            { id: 'operatorFilter', name: 'Оператор', value: getSelectDisplayValue('operatorFilter') },
+            { id: 'dateFilter', name: 'Дата', value: getSelectDisplayValue('dateFilter') },
+            { id: 'categoryFilter', name: 'Категория', value: getSelectDisplayValue('categoryFilter') }
+        ];
+
+        const idFilter = document.getElementById('idFilter').value;
+        const searchText = document.getElementById('searchInput').value;
+
+        const activeFiltersDiv = document.getElementById('activeFilters');
+        activeFiltersDiv.innerHTML = '';
+
+        // Добавляем активные фильтры из select
+        filters.forEach(filter => {
+            if (filter.value && filter.value !== 'all' && filter.value !== 'Все операторы' && filter.value !== 'Все статусы' && filter.value !== 'Все приоритеты' && filter.value !== 'За все время' && filter.value !== 'Все категории') {
+                addFilterTag(activeFiltersDiv, filter.name, filter.value, filter.id);
+            }
+        });
+
+        // Добавляем фильтр по ID
+        if (idFilter) {
+            addFilterTag(activeFiltersDiv, 'ID', idFilter, 'idFilter');
         }
 
-        document.addEventListener('DOMContentLoaded', function() {
-            const statusFilter = document.getElementById('statusFilter');
-            const priorityFilter = document.getElementById('priorityFilter');
-            const searchInput = document.getElementById('searchInput');
-            
-            if (statusFilter) statusFilter.addEventListener('change', filterRequests);
-            if (priorityFilter) priorityFilter.addEventListener('change', filterRequests);
-            if (searchInput) searchInput.addEventListener('keyup', filterRequests);
-            
-            filterRequests();
+        // Добавляем поисковый фильтр
+        if (searchText) {
+            addFilterTag(activeFiltersDiv, 'Поиск', searchText, 'searchInput');
+        }
+    }
+
+    // Вспомогательная функция для получения отображаемого значения select
+    function getSelectDisplayValue(selectId) {
+        const select = document.getElementById(selectId);
+        if (!select) return 'all';
+        const selectedOption = select.options[select.selectedIndex];
+        return selectedOption ? selectedOption.text : 'all';
+    }
+
+    // Вспомогательная функция для получения значения select
+    function getSelectValue(selectId) {
+        const select = document.getElementById(selectId);
+        if (!select) return 'all';
+        return select.value;
+    }
+
+    // Функция для добавления тега фильтра
+    function addFilterTag(container, filterName, filterValue, filterId) {
+        // Обрезаем слишком длинные значения
+        const displayValue = filterValue.length > 30 ? filterValue.substring(0, 27) + '...' : filterValue;
+        
+        const tag = document.createElement('span');
+        tag.className = 'filter-tag';
+        tag.innerHTML = `${filterName}: ${displayValue} <i class="fas fa-times" onclick="removeFilter('${filterId}')"></i>`;
+        container.appendChild(tag);
+    }
+
+    // Функция для удаления конкретного фильтра
+    function removeFilter(filterId) {
+        console.log('Удаляем фильтр:', filterId); // Для отладки
+        
+        if (filterId === 'searchInput') {
+            // Для поискового поля
+            document.getElementById('searchInput').value = '';
+        } else if (filterId === 'idFilter') {
+            // Для поля ID
+            document.getElementById('idFilter').value = '';
+        } else {
+            // Для всех select элементов
+            const select = document.getElementById(filterId);
+            if (select) {
+                select.value = 'all';
+                // Принудительно вызываем изменение
+                select.dispatchEvent(new Event('change'));
+            }
+        }
+        
+        // Важно: вызываем filterRequests для применения изменений
+        filterRequests();
+    }
+
+    // Функция для сброса всех фильтров
+    function clearAllFilters() {
+        // Сбрасываем select элементы
+        document.getElementById('statusFilter').value = 'all';
+        document.getElementById('priorityFilter').value = 'all';
+        document.getElementById('operatorFilter').value = 'all';
+        document.getElementById('dateFilter').value = 'all';
+        document.getElementById('categoryFilter').value = 'all';
+        
+        // Сбрасываем input поля
+        document.getElementById('idFilter').value = '';
+        document.getElementById('searchInput').value = '';
+        
+        // Сбрасываем radio кнопки
+        const anyRadio = document.querySelector('input[name="searchMode"][value="any"]');
+        if (anyRadio) anyRadio.checked = true;
+        
+        // Применяем изменения
+        filterRequests();
+    }
+
+    // Функция для отображения пустого состояния
+    function showEmptyState(isEmpty) {
+        const container = document.getElementById('requestsContainer');
+        let emptyState = container.querySelector('.empty-state-filtered');
+
+        // Удаляем существующее пустое состояние если оно есть
+        if (emptyState) {
+            emptyState.remove();
+        }
+
+        // Если нет результатов и есть карточки (или их нет), показываем пустое состояние
+        if (isEmpty) {
+            emptyState = document.createElement('div');
+            emptyState.className = 'empty-state empty-state-filtered';
+            emptyState.innerHTML = `
+                <i class="fas fa-filter fa-3x"></i>
+                <h3>Ничего не найдено</h3>
+                <p>Попробуйте изменить параметры фильтрации</p>
+                <button class="btn btn-secondary" onclick="clearAllFilters()" style="margin-top: 15px;">
+                    <i class="fas fa-times"></i> Сбросить фильтры
+                </button>
+            `;
+            container.appendChild(emptyState);
+        }
+    }
+
+    // Функция для экспорта отфильтрованных данных
+    function exportFilteredData() {
+        const visibleCards = document.querySelectorAll('.request-card[style="display: block;"]');
+        const data = [];
+        
+        visibleCards.forEach(card => {
+            data.push({
+                id: card.dataset.id,
+                status: card.dataset.status,
+                priority: card.dataset.priority,
+                operator: card.dataset.operator,
+                category: card.dataset.category,
+                date: card.dataset.date
+            });
         });
-    </script>
+        
+        alert(`Найдено ${data.length} заявок`);
+        console.log('Отфильтрованные данные:', data);
+        
+        // Дополнительно можно показать статистику по операторам
+        const operators = [...new Set(data.map(item => item.operator))];
+        console.log('Уникальные операторы в выборке:', operators);
+    }
+
+    // Функция для копирования ссылки с фильтрами
+    function copyFiltersLink() {
+        const filters = {
+            status: document.getElementById('statusFilter').value,
+            priority: document.getElementById('priorityFilter').value,
+            operator: document.getElementById('operatorFilter').value,
+            date: document.getElementById('dateFilter').value,
+            category: document.getElementById('categoryFilter').value,
+            id: document.getElementById('idFilter').value,
+            search: document.getElementById('searchInput').value,
+            searchMode: document.querySelector('input[name="searchMode"]:checked')?.value || 'any'
+        };
+        
+        // Убираем пустые значения
+        const cleanFilters = {};
+        Object.keys(filters).forEach(key => {
+            if (filters[key] && filters[key] !== 'all' && filters[key] !== 'any') {
+                cleanFilters[key] = filters[key];
+            }
+        });
+        
+        const params = new URLSearchParams(cleanFilters).toString();
+        const url = `${window.location.pathname}${params ? '?' + params : ''}`;
+        
+        navigator.clipboard.writeText(url).then(() => {
+            alert('Ссылка с фильтрами скопирована!');
+        }).catch(err => {
+            console.error('Ошибка копирования:', err);
+            alert('Не удалось скопировать ссылку');
+        });
+    }
+
+    // Функция для проверки дубликатов в данных (для отладки)
+    function checkForDuplicates() {
+        const cards = document.querySelectorAll('.request-card');
+        const operators = [];
+        const ids = new Set();
+        let hasDuplicates = false;
+        
+        cards.forEach(card => {
+            const operator = card.dataset.operator;
+            operators.push(operator);
+            
+            const id = card.dataset.id;
+            if (ids.has(id)) {
+                console.log('Найден дубликат ID:', id);
+                hasDuplicates = true;
+            }
+            ids.add(id);
+        });
+        
+        const uniqueOperators = [...new Set(operators)];
+        console.log('Все операторы:', operators);
+        console.log('Уникальные операторы:', uniqueOperators);
+        console.log('Количество дубликатов операторов:', operators.length - uniqueOperators.length);
+        
+        return !hasDuplicates;
+    }
+
+    // Инициализация при загрузке страницы
+    document.addEventListener('DOMContentLoaded', function() {
+        // Добавляем обработчики событий для всех фильтров
+        const filterElements = [
+            'statusFilter', 'priorityFilter', 'operatorFilter', 
+            'dateFilter', 'categoryFilter', 'idFilter', 'searchInput'
+        ];
+        
+        filterElements.forEach(id => {
+            const element = document.getElementById(id);
+            if (element) {
+                element.addEventListener('change', filterRequests);
+                element.addEventListener('keyup', function(e) {
+                    if (e.key === 'Enter') {
+                        filterRequests();
+                    }
+                });
+            }
+        });
+        
+        // Обработчик для radio кнопок
+        document.querySelectorAll('input[name="searchMode"]').forEach(radio => {
+            radio.addEventListener('change', filterRequests);
+        });
+        
+        // Проверяем на дубликаты при загрузке (для отладки)
+        setTimeout(checkForDuplicates, 1000);
+        
+        // Применяем фильтры из URL если есть
+        const urlParams = new URLSearchParams(window.location.search);
+        
+        const filterMappings = {
+            'status': 'statusFilter',
+            'priority': 'priorityFilter',
+            'operator': 'operatorFilter',
+            'date': 'dateFilter',
+            'category': 'categoryFilter',
+            'id': 'idFilter',
+            'search': 'searchInput'
+        };
+        
+        Object.keys(filterMappings).forEach(param => {
+            if (urlParams.has(param)) {
+                const element = document.getElementById(filterMappings[param]);
+                if (element) {
+                    element.value = urlParams.get(param);
+                }
+            }
+        });
+        
+        if (urlParams.has('searchMode')) {
+            const radio = document.querySelector(`input[name="searchMode"][value="${urlParams.get('searchMode')}"]`);
+            if (radio) radio.checked = true;
+        }
+        
+        // Применяем фильтры
+        filterRequests();
+    });
+</script>
 </body>
 </html>
