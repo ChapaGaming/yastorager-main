@@ -1,0 +1,1594 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Управление пользователями | ГАЗ</title>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* ========== ОСНОВНЫЕ СТИЛИ ========== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a0e1a 0%, #1a2036 100%);
+            color: #e2e8f0;
+            min-height: 100vh;
+            line-height: 1.5;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* ========== CSS-ПЕРЕМЕННЫЕ ========== */
+        :root {
+            --primary-color: #4ade80;
+            --secondary-color: #22c55e;
+            --accent-color: #16a34a;
+            --bg-color: rgba(255, 255, 255, 0.02);
+            --card-bg: rgba(20, 25, 40, 0.6);
+            --text-color: #e2e8f0;
+            --text-secondary: #9ca3af;
+            --border-color: rgba(255, 255, 255, 0.05);
+            --border-light: rgba(255, 255, 255, 0.03);
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --code-bg: rgba(0, 0, 0, 0.3);
+        }
+
+        /* ========== ИНДУСТРИАЛЬНЫЙ ФОН ========== */
+        .industrial-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.1;
+        }
+
+        .gear {
+            position: absolute;
+            border-radius: 50%;
+            border: 2px solid rgba(74, 222, 128, 0.2);
+            animation: rotate 20s linear infinite;
+        }
+
+        .gear::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 30%;
+            height: 30%;
+            background: rgba(74, 222, 128, 0.1);
+            border-radius: 50%;
+        }
+
+        .gear-tooth {
+            position: absolute;
+            width: 20%;
+            height: 8%;
+            background: rgba(74, 222, 128, 0.2);
+            top: 46%;
+            transform-origin: 100% 50%;
+        }
+
+        .gear-large {
+            width: 300px;
+            height: 300px;
+            top: 10%;
+            left: 5%;
+        }
+
+        .gear-medium {
+            width: 200px;
+            height: 200px;
+            bottom: 20%;
+            right: 10%;
+            animation-direction: reverse;
+            animation-duration: 15s;
+        }
+
+        .gear-small {
+            width: 150px;
+            height: 150px;
+            top: 30%;
+            right: 20%;
+            animation-duration: 12s;
+        }
+
+        .gear-large .gear-tooth:nth-child(1) { transform: rotate(0deg) translateX(150px); }
+        .gear-large .gear-tooth:nth-child(2) { transform: rotate(30deg) translateX(150px); }
+        .gear-large .gear-tooth:nth-child(3) { transform: rotate(60deg) translateX(150px); }
+        .gear-large .gear-tooth:nth-child(4) { transform: rotate(90deg) translateX(150px); }
+        .gear-large .gear-tooth:nth-child(5) { transform: rotate(120deg) translateX(150px); }
+        .gear-large .gear-tooth:nth-child(6) { transform: rotate(150deg) translateX(150px); }
+        .gear-large .gear-tooth:nth-child(7) { transform: rotate(180deg) translateX(150px); }
+        .gear-large .gear-tooth:nth-child(8) { transform: rotate(210deg) translateX(150px); }
+        .gear-large .gear-tooth:nth-child(9) { transform: rotate(240deg) translateX(150px); }
+        .gear-large .gear-tooth:nth-child(10) { transform: rotate(270deg) translateX(150px); }
+        .gear-large .gear-tooth:nth-child(11) { transform: rotate(300deg) translateX(150px); }
+        .gear-large .gear-tooth:nth-child(12) { transform: rotate(330deg) translateX(150px); }
+
+        .gear-medium .gear-tooth:nth-child(1) { transform: rotate(0deg) translateX(100px); }
+        .gear-medium .gear-tooth:nth-child(2) { transform: rotate(45deg) translateX(100px); }
+        .gear-medium .gear-tooth:nth-child(3) { transform: rotate(90deg) translateX(100px); }
+        .gear-medium .gear-tooth:nth-child(4) { transform: rotate(135deg) translateX(100px); }
+        .gear-medium .gear-tooth:nth-child(5) { transform: rotate(180deg) translateX(100px); }
+        .gear-medium .gear-tooth:nth-child(6) { transform: rotate(225deg) translateX(100px); }
+        .gear-medium .gear-tooth:nth-child(7) { transform: rotate(270deg) translateX(100px); }
+        .gear-medium .gear-tooth:nth-child(8) { transform: rotate(315deg) translateX(100px); }
+
+        .gear-small .gear-tooth:nth-child(1) { transform: rotate(0deg) translateX(75px); }
+        .gear-small .gear-tooth:nth-child(2) { transform: rotate(60deg) translateX(75px); }
+        .gear-small .gear-tooth:nth-child(3) { transform: rotate(120deg) translateX(75px); }
+        .gear-small .gear-tooth:nth-child(4) { transform: rotate(180deg) translateX(75px); }
+        .gear-small .gear-tooth:nth-child(5) { transform: rotate(240deg) translateX(75px); }
+        .gear-small .gear-tooth:nth-child(6) { transform: rotate(300deg) translateX(75px); }
+
+        .piston {
+            position: absolute;
+            width: 10px;
+            height: 100px;
+            background: rgba(74, 222, 128, 0.2);
+            bottom: 10%;
+            left: 20%;
+            animation: pistonMove 3s ease-in-out infinite;
+        }
+
+        .piston::before {
+            content: '';
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background: rgba(74, 222, 128, 0.3);
+            border-radius: 50%;
+            top: -15px;
+            left: -10px;
+        }
+
+        #piston2 {
+            left: 30%;
+            animation-delay: 1s;
+        }
+
+        .engine-block {
+            position: absolute;
+            width: 80px;
+            height: 60px;
+            background: rgba(74, 222, 128, 0.15);
+            bottom: 15%;
+            left: 25%;
+            border-radius: 10px;
+            animation: glow 4s ease-in-out infinite;
+        }
+
+        #engine2 {
+            left: 35%;
+            animation-delay: 1s;
+        }
+
+        .pipe {
+            position: absolute;
+            width: 15px;
+            height: 150px;
+            background: rgba(74, 222, 128, 0.15);
+            top: 10%;
+            right: 15%;
+            transform: rotate(15deg);
+            border-radius: 10px;
+        }
+
+        #pipe2 {
+            right: 25%;
+            height: 200px;
+            transform: rotate(-5deg);
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes pistonMove {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-30px); }
+        }
+
+        @keyframes glow {
+            0%, 100% { opacity: 0.15; }
+            50% { opacity: 0.3; }
+        }
+
+        /* ========== ОСНОВНОЙ КОНТЕЙНЕР ========== */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ========== ШАПКА ========== */
+        .header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .header-icon {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* ========== СТРАНИЦЫ ========== */
+        .pages-container {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 2rem;
+            padding: 2rem;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 20px 30px -15px rgba(0, 0, 0, 0.5);
+        }
+
+        .page-title {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .title-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .page-title h2 {
+            font-size: 1.8rem;
+            color: var(--text-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .page-title p {
+            color: var(--text-secondary);
+        }
+
+        /* ========== ПОПАПЫ ========== */
+        .error-popup, .success-popup {
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            animation: slideIn 0.3s ease;
+        }
+
+        .error-popup {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+        }
+
+        .success-popup {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+        }
+
+        .error-popup i, .success-popup i {
+            font-size: 1.5rem;
+            margin-top: 2px;
+        }
+
+        .error-popup-content h4, .success-popup-content h4 {
+            margin: 0 0 5px 0;
+            color: white;
+        }
+
+        .error-popup-content p, .success-popup-content p {
+            margin: 0;
+            opacity: 0.9;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* ========== УЛУЧШЕННЫЕ ФИЛЬТРЫ ========== */
+        .filters-section {
+            background: var(--bg-color);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+            border: 1px solid var(--border-color);
+        }
+
+        .filters-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .filters-header h3 {
+            color: var(--text-color);
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .filters-header h3 i {
+            color: var(--primary-color);
+        }
+
+        .filter-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-clear-filters {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-clear-filters:hover {
+            background: rgba(239, 68, 68, 0.1);
+            border-color: var(--danger-color);
+            color: var(--danger-color);
+        }
+
+        .filters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .filter-group label {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .filter-group label i {
+            color: var(--primary-color);
+            width: 16px;
+        }
+
+        .filter-group select,
+        .filter-group input {
+            width: 100%;
+            padding: 8px 12px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--text-color);
+            font-size: 0.95rem;
+            transition: all 0.2s;
+        }
+
+        .filter-group select:focus,
+        .filter-group input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(74, 222, 128, 0.2);
+        }
+
+        .filter-group select:hover,
+        .filter-group input:hover {
+            border-color: var(--primary-color);
+        }
+
+        .filter-group input::placeholder {
+            color: var(--text-secondary);
+            opacity: 0.5;
+        }
+
+        /* Расширенные опции поиска */
+        .search-options {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .search-radio-group {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .search-radio-label {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+
+        .search-radio-label input[type="radio"] {
+            accent-color: var(--primary-color);
+            width: auto;
+        }
+
+        .active-filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+            min-height: 30px;
+        }
+
+        .filter-tag {
+            background: rgba(74, 222, 128, 0.15);
+            border: 1px solid rgba(74, 222, 128, 0.3);
+            color: var(--primary-color);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .filter-tag i {
+            cursor: pointer;
+            font-size: 0.8rem;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+
+        .filter-tag i:hover {
+            opacity: 1;
+            color: var(--danger-color);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* Статистика фильтрации */
+        .filter-stats {
+            margin: 10px 0;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* ========== КОНТЕЙНЕР ПОЛЬЗОВАТЕЛЕЙ ========== */
+        .users-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        /* ========== КАРТОЧКА ПОЛЬЗОВАТЕЛЯ ========== */
+        .user-card {
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .user-card:hover {
+            box-shadow: 0 5px 20px rgba(74, 222, 128, 0.2);
+            transform: translateY(-2px);
+            border-color: rgba(74, 222, 128, 0.3);
+        }
+
+        .user-card.admin {
+            border-left: 4px solid var(--primary-color);
+            background: linear-gradient(135deg, rgba(74, 222, 128, 0.05), rgba(0, 0, 0, 0.2));
+        }
+
+        .user-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+            font-weight: 600;
+        }
+
+        .user-details h3 {
+            font-size: 1.2rem;
+            margin-bottom: 4px;
+            color: var(--text-color);
+        }
+
+        .user-details .user-email {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .user-details .user-email i {
+            color: var(--primary-color);
+            font-size: 0.8rem;
+        }
+
+        .user-badges {
+            display: flex;
+            gap: 8px;
+        }
+
+        .admin-badge {
+            background: rgba(74, 222, 128, 0.15);
+            border: 1px solid rgba(74, 222, 128, 0.3);
+            color: var(--primary-color);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .user-badge {
+            background: rgba(156, 163, 175, 0.15);
+            border: 1px solid rgba(156, 163, 175, 0.3);
+            color: var(--text-secondary);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .user-stats {
+            display: flex;
+            gap: 15px;
+            margin: 15px 0;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+        }
+
+        .stat-item {
+            flex: 1;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-top: 2px;
+        }
+
+        /* ========== ФОРМА РЕДАКТИРОВАНИЯ ========== */
+        .edit-form {
+            margin-top: 15px;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            display: none;
+        }
+
+        .edit-form.show {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        .form-group label i {
+            color: var(--primary-color);
+            margin-right: 5px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 8px 12px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--text-color);
+            font-size: 0.95rem;
+            transition: all 0.2s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(74, 222, 128, 0.2);
+        }
+
+        .form-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 10px 0;
+        }
+
+        .form-checkbox input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--primary-color);
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn-save {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+            flex: 1;
+        }
+
+        .btn-save:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px -5px var(--primary-color);
+        }
+
+        .btn-cancel {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-cancel:hover {
+            background: rgba(239, 68, 68, 0.1);
+            border-color: var(--danger-color);
+            color: var(--danger-color);
+        }
+
+        /* ========== КНОПКИ ДЕЙСТВИЙ ========== */
+        .user-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-edit {
+            background: rgba(74, 222, 128, 0.15);
+            border: 1px solid rgba(74, 222, 128, 0.3);
+            color: var(--primary-color);
+        }
+
+        .btn-edit:hover {
+            background: rgba(74, 222, 128, 0.25);
+            transform: translateY(-2px);
+        }
+
+        .btn-delete {
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #ef4444;
+        }
+
+        .btn-delete:hover {
+            background: rgba(239, 68, 68, 0.25);
+            transform: translateY(-2px);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px -5px var(--primary-color);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--primary-color);
+        }
+
+        /* Подсветка при поиске */
+        .highlight {
+            background-color: rgba(74, 222, 128, 0.3);
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-weight: 500;
+            color: var(--primary-color);
+        }
+
+        /* ========== ПУСТОЕ СОСТОЯНИЕ ========== */
+        .empty-state {
+            text-align: center;
+            padding: 50px;
+            background: var(--bg-color);
+            border-radius: 8px;
+            color: var(--text-secondary);
+            grid-column: 1 / -1;
+        }
+
+        .empty-state i {
+            margin-bottom: 20px;
+            opacity: 0.5;
+            color: var(--text-secondary);
+        }
+
+        .empty-state h3 {
+            margin-bottom: 10px;
+            color: var(--text-color);
+        }
+
+        /* ========== КНОПКА ДОБАВЛЕНИЯ ========== */
+        .add-user-btn {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        /* ========== ФУТЕР ========== */
+        .footer {
+            margin-top: 3rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border-color);
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .footer-icons {
+            margin-bottom: 1rem;
+        }
+
+        .footer-icons i {
+            margin: 0 10px;
+            color: var(--primary-color);
+            opacity: 0.5;
+            transition: opacity 0.3s;
+        }
+
+        .footer-icons i:hover {
+            opacity: 1;
+        }
+
+        .footer-sub {
+            margin-top: 0.5rem;
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+
+        /* ========== АДАПТИВНОСТЬ ========== */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .pages-container {
+                padding: 1rem;
+            }
+            
+            .page-title h2 {
+                font-size: 1.5rem;
+            }
+            
+            .filters-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .search-options {
+                flex-direction: column;
+            }
+            
+            .search-radio-group {
+                justify-content: flex-start;
+            }
+
+            .users-container {
+                grid-template-columns: 1fr;
+            }
+
+            .user-header {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .user-actions {
+                justify-content: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Индустриальный фон -->
+    <div class="industrial-background">
+        <div class="gear gear-large" id="gear1">
+            <div class="gear-tooth"></div><div class="gear-tooth"></div><div class="gear-tooth"></div>
+            <div class="gear-tooth"></div><div class="gear-tooth"></div><div class="gear-tooth"></div>
+            <div class="gear-tooth"></div><div class="gear-tooth"></div><div class="gear-tooth"></div>
+            <div class="gear-tooth"></div><div class="gear-tooth"></div><div class="gear-tooth"></div>
+        </div>
+        <div class="gear gear-medium" id="gear2">
+            <div class="gear-tooth"></div><div class="gear-tooth"></div><div class="gear-tooth"></div>
+            <div class="gear-tooth"></div><div class="gear-tooth"></div><div class="gear-tooth"></div>
+            <div class="gear-tooth"></div><div class="gear-tooth"></div>
+        </div>
+        <div class="gear gear-small" id="gear3">
+            <div class="gear-tooth"></div><div class="gear-tooth"></div><div class="gear-tooth"></div>
+            <div class="gear-tooth"></div><div class="gear-tooth"></div><div class="gear-tooth"></div>
+        </div>
+        <div class="piston" id="piston1"></div>
+        <div class="piston" id="piston2"></div>
+        <div class="engine-block" id="engine1"></div>
+        <div class="engine-block" id="engine2"></div>
+        <div class="pipe" id="pipe1"></div>
+        <div class="pipe" id="pipe2"></div>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <div class="header-icon">
+                <i class="fas fa-users-cog"></i>
+            </div>
+            <h1>Управление пользователями</h1>
+            <p>Административная панель управления учетными записями</p>
+        </div>
+
+        <div class="pages-container">
+            <div class="page">
+                <div class="page-title">
+                    <div class="title-icon">
+                        <i class="fas fa-user-friends"></i>
+                    </div>
+                    <h2>Пользователи системы</h2>
+                    <p>Всего пользователей: <span id="totalUsers">{{ users|length }}</span></p>
+                </div>
+
+                {% if error %}
+                <div class="error-popup" style="display: block; margin-bottom: 20px;">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <div class="error-popup-content">
+                        <h4>Ошибка</h4>
+                        <p>{{ error }}</p>
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if success %}
+                <div class="success-popup" style="display: block; margin-bottom: 20px;">
+                    <i class="fas fa-check-circle"></i>
+                    <div class="success-popup-content">
+                        <h4>Успешно</h4>
+                        <p>{{ success }}</p>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Улучшенная система фильтров -->
+                <div class="filters-section">
+                    <div class="filters-header">
+                        <h3>
+                            <i class="fas fa-filter"></i>
+                            Фильтры
+                        </h3>
+                        <div class="filter-actions">
+                            <button class="btn-clear-filters" onclick="clearAllFilters()">
+                                <i class="fas fa-times"></i>
+                                Сбросить все
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Основные фильтры -->
+                    <div class="filters-grid">
+                        <div class="filter-group">
+                            <label><i class="fas fa-user-tag"></i> Роль:</label>
+                            <select id="roleFilter" onchange="filterUsers()">
+                                <option value="all">Все пользователи</option>
+                                <option value="admin">👑 Администраторы</option>
+                                <option value="user">👤 Обычные пользователи</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-group">
+                            <label><i class="fas fa-sort-alpha-down"></i> Сортировка:</label>
+                            <select id="sortFilter" onchange="filterUsers()">
+                                <option value="name_asc">По имени (А-Я)</option>
+                                <option value="name_desc">По имени (Я-А)</option>
+                                <option value="email_asc">По email (А-Я)</option>
+                                <option value="email_desc">По email (Я-А)</option>
+                                <option value="id_asc">По ID (возрастание)</option>
+                                <option value="id_desc">По ID (убывание)</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-group">
+                            <label><i class="fas fa-hashtag"></i> ID пользователя:</label>
+                            <input type="number" id="idFilter" placeholder="Введите ID..." onkeyup="filterUsers()">
+                        </div>
+                    </div>
+
+                    <!-- Расширенные опции поиска -->
+                    <div class="search-options">
+                        <div class="filter-group" style="flex: 1;">
+                            <label><i class="fas fa-search"></i> Поиск:</label>
+                            <input type="text" id="searchInput" placeholder="Поиск по имени, email..." onkeyup="filterUsers()">
+                        </div>
+                        
+                        <div class="search-radio-group">
+                            <span class="search-radio-label">
+                                <input type="radio" name="searchMode" value="any" checked onchange="filterUsers()"> 
+                                <i class="fas fa-link"></i> Любое совпадение
+                            </span>
+                            <span class="search-radio-label">
+                                <input type="radio" name="searchMode" value="all" onchange="filterUsers()"> 
+                                <i class="fas fa-tasks"></i> Все слова
+                            </span>
+                            <span class="search-radio-label">
+                                <input type="radio" name="searchMode" value="exact" onchange="filterUsers()"> 
+                                <i class="fas fa-quote-right"></i> Точное совпадение
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Активные фильтры -->
+                    <div class="active-filters" id="activeFilters"></div>
+
+                    <!-- Статистика фильтрации -->
+                    <div class="filter-stats" id="filterStats">
+                        <span>Показано: <span id="displayedCount">{{ users|length }}</span> из {{ users|length }}</span>
+                    </div>
+                </div>
+
+                <!-- Кнопка добавления пользователя -->
+                <div class="add-user-btn">
+                    <button class="btn btn-primary" onclick="showAddUserForm()">
+                        <i class="fas fa-plus-circle"></i> Добавить нового пользователя
+                    </button>
+                </div>
+
+                <!-- Форма добавления пользователя -->
+                <div class="edit-form" id="addUserForm" style="margin-bottom: 20px;">
+                    <h4 style="margin-bottom: 15px; color: var(--primary-color);">
+                        <i class="fas fa-user-plus"></i> Добавление нового пользователя
+                    </h4>
+                    <form method="POST" action="/admin/users/add">
+                        <div class="form-group">
+                            <label><i class="fas fa-user"></i> ФИО:</label>
+                            <input type="text" name="fio" class="form-control" required placeholder="Введите ФИО">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label><i class="fas fa-envelope"></i> Email:</label>
+                            <input type="email" name="email" class="form-control" required placeholder="Введите email">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label><i class="fas fa-lock"></i> Пароль:</label>
+                            <input type="password" name="password" class="form-control" required placeholder="Введите пароль">
+                        </div>
+                        
+                        <div class="form-checkbox">
+                            <input type="checkbox" name="is_admin" id="is_admin">
+                            <label for="is_admin"><i class="fas fa-crown"></i> Администратор</label>
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="submit" class="btn-save">
+                                <i class="fas fa-save"></i> Сохранить
+                            </button>
+                            <button type="button" class="btn-cancel" onclick="hideAddUserForm()">
+                                <i class="fas fa-times"></i> Отмена
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Список пользователей -->
+                <div class="users-container" id="usersContainer">
+                    {% if users %}
+                        {% for user in users %}
+                        <div class="user-card {% if user.admin %}admin{% endif %}" 
+                             data-id="{{ user.id }}"
+                             data-role="{% if user.admin %}admin{% else %}user{% endif %}"
+                             data-name="{{ user.fio }}"
+                             data-email="{{ user.email }}"
+                             data-search-text="{{ user.id }} {{ user.fio }} {{ user.email }} {% if user.admin %}администратор админ{% endif %}">
+                            
+                            <div class="user-header">
+                                <div class="user-info">
+                                    <div class="user-avatar">
+                                        {{ user.fio[:1] }}{% if user.fio.split()|length > 1 %}{{ user.fio.split()[1][:1] }}{% endif %}
+                                    </div>
+                                    <div class="user-details">
+                                        <h3>{{ user.fio }}</h3>
+                                        <div class="user-email">
+                                            <i class="fas fa-envelope"></i> {{ user.email }}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="user-badges">
+                                    {% if user.admin %}
+                                    <span class="admin-badge">
+                                        <i class="fas fa-crown"></i> Администратор
+                                    </span>
+                                    {% else %}
+                                    <span class="user-badge">
+                                        <i class="fas fa-user"></i> Пользователь
+                                    </span>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div class="user-stats">
+                                <div class="stat-item">
+                                    <div class="stat-value">#{{ user.id }}</div>
+                                    <div class="stat-label">ID</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-value">
+                                        <i class="fas {% if user.admin %}fa-crown{% else %}fa-user{% endif %}"></i>
+                                    </div>
+                                    <div class="stat-label">Роль</div>
+                                </div>
+                            </div>
+
+                            <!-- Форма редактирования -->
+                            <div class="edit-form" id="editForm-{{ user.id }}">
+                                <h4 style="margin-bottom: 15px; color: var(--primary-color);">
+                                    <i class="fas fa-edit"></i> Редактирование пользователя
+                                </h4>
+                                <form method="POST" action="/admin/users/{{ user.id }}/edit">
+                                    <div class="form-group">
+                                        <label><i class="fas fa-user"></i> ФИО:</label>
+                                        <input type="text" name="fio" class="form-control" value="{{ user.fio }}" required>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label><i class="fas fa-envelope"></i> Email:</label>
+                                        <input type="email" name="email" class="form-control" value="{{ user.email }}" required>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label><i class="fas fa-lock"></i> Новый пароль (оставьте пустым, если не хотите менять):</label>
+                                        <input type="password" name="password" class="form-control" placeholder="Введите новый пароль">
+                                    </div>
+                                    
+                                    <div class="form-checkbox">
+                                        <input type="checkbox" name="is_admin" id="is_admin_{{ user.id }}" {% if user.admin %}checked{% endif %}>
+                                        <label for="is_admin_{{ user.id }}"><i class="fas fa-crown"></i> Администратор</label>
+                                    </div>
+                                    
+                                    <div class="form-actions">
+                                        <button type="submit" class="btn-save">
+                                            <i class="fas fa-save"></i> Сохранить
+                                        </button>
+                                        <button type="button" class="btn-cancel" onclick="hideEditForm({{ user.id }})">
+                                            <i class="fas fa-times"></i> Отмена
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+
+                            <div class="user-actions">
+                                <button class="btn btn-edit" onclick="showEditForm({{ user.id }})">
+                                    <i class="fas fa-edit"></i> Редактировать
+                                </button>
+                                
+                                {% if user.id != current_user.id %}
+                                <form method="POST" action="/admin/users/{{ user.id }}/delete" style="display: inline;" onsubmit="return confirm('Вы уверены, что хотите удалить пользователя {{ user.fio }}?')">
+                                    <button type="submit" class="btn btn-delete">
+                                        <i class="fas fa-trash-alt"></i> Удалить
+                                    </button>
+                                </form>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                    <div class="empty-state">
+                        <i class="fas fa-users-slash fa-3x"></i>
+                        <h3>Нет пользователей</h3>
+                        <p>В системе пока нет зарегистрированных пользователей</p>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="action-buttons" style="margin-top: 30px;">
+                    <a href="/profile" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Назад к профилю
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <div class="footer-icons">
+                <i class="fas fa-cog"></i>
+                <i class="fas fa-industry"></i>
+                <i class="fas fa-tools"></i>
+            </div>
+            <p>© 2023 ГАЗ. Панель управления пользователями.</p>
+            <p class="footer-sub">Администратор: {{ current_user.fio }}</p>
+        </div>
+    </div>
+
+<script>
+    // Объект для хранения оригинальных данных пользователей
+    let originalUsersData = [];
+
+    // Функция для получения данных пользователей из DOM
+    function collectUsersData() {
+        const cards = document.querySelectorAll('.user-card');
+        originalUsersData = [];
+        
+        cards.forEach(card => {
+            originalUsersData.push({
+                id: card.dataset.id,
+                role: card.dataset.role,
+                name: card.dataset.name,
+                email: card.dataset.email,
+                searchText: card.dataset.searchText,
+                element: card
+            });
+        });
+    }
+
+    // Основная функция фильтрации
+    function filterUsers() {
+        // Собираем данные при первом вызове
+        if (originalUsersData.length === 0) {
+            collectUsersData();
+        }
+
+        const roleFilter = document.getElementById('roleFilter').value;
+        const sortFilter = document.getElementById('sortFilter').value;
+        const idFilter = document.getElementById('idFilter').value;
+        const searchText = document.getElementById('searchInput').value.trim().toLowerCase();
+        
+        // Получаем выбранный режим поиска
+        const searchMode = document.querySelector('input[name="searchMode"]:checked')?.value || 'any';
+
+        let visibleCount = 0;
+        let filteredUsers = [];
+
+        // Применяем фильтры
+        originalUsersData.forEach(user => {
+            const roleMatch = roleFilter === 'all' || user.role === roleFilter;
+            const idMatch = idFilter === '' || user.id === idFilter;
+
+            // Поиск по тексту
+            let searchMatch = true;
+            if (searchText !== '') {
+                if (searchMode === 'exact') {
+                    searchMatch = user.searchText.toLowerCase() === searchText;
+                } else if (searchMode === 'all') {
+                    const words = searchText.split(/\s+/);
+                    searchMatch = words.every(word => user.searchText.toLowerCase().includes(word));
+                } else {
+                    const words = searchText.split(/\s+/);
+                    searchMatch = words.some(word => user.searchText.toLowerCase().includes(word));
+                }
+            }
+
+            if (roleMatch && idMatch && searchMatch) {
+                filteredUsers.push(user);
+                visibleCount++;
+            }
+        });
+
+        // Применяем сортировку
+        filteredUsers.sort((a, b) => {
+            switch(sortFilter) {
+                case 'name_asc':
+                    return a.name.localeCompare(b.name);
+                case 'name_desc':
+                    return b.name.localeCompare(a.name);
+                case 'email_asc':
+                    return a.email.localeCompare(b.email);
+                case 'email_desc':
+                    return b.email.localeCompare(a.email);
+                case 'id_asc':
+                    return parseInt(a.id) - parseInt(b.id);
+                case 'id_desc':
+                    return parseInt(b.id) - parseInt(a.id);
+                default:
+                    return 0;
+            }
+        });
+
+        // Обновляем отображение
+        originalUsersData.forEach(user => {
+            user.element.style.display = 'none';
+        });
+
+        filteredUsers.forEach(user => {
+            user.element.style.display = 'block';
+            
+            // Подсвечиваем найденный текст
+            if (searchText !== '') {
+                highlightText(user.element, searchText);
+            } else {
+                removeHighlight(user.element);
+            }
+        });
+
+        // Обновляем статистику
+        document.getElementById('displayedCount').textContent = visibleCount;
+        
+        // Обновляем активные фильтры
+        updateActiveFilters();
+        
+        // Показываем пустое состояние, если нет результатов
+        showEmptyState(visibleCount === 0);
+    }
+
+    // Функция для подсветки текста
+    function highlightText(card, searchText) {
+        removeHighlight(card);
+        
+        const words = searchText.split(/\s+/).filter(word => word.length > 1);
+        if (words.length === 0) return;
+        
+        const textElements = card.querySelectorAll('.user-details h3, .user-email, .user-badges span');
+        
+        textElements.forEach(element => {
+            let html = element.innerHTML;
+            words.forEach(word => {
+                try {
+                    const escapedWord = word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                    const regex = new RegExp(`(${escapedWord})`, 'gi');
+                    html = html.replace(/(>)([^<]+)(?=<|$)/g, (match, p1, p2) => {
+                        return p1 + p2.replace(regex, '<span class="highlight">$1</span>');
+                    });
+                } catch (e) {
+                    console.log('Ошибка в регулярном выражении для слова:', word);
+                }
+            });
+            element.innerHTML = html;
+        });
+    }
+
+    // Функция для удаления подсветки
+    function removeHighlight(card) {
+        const highlights = card.querySelectorAll('.highlight');
+        highlights.forEach(el => {
+            const parent = el.parentNode;
+            parent.replaceChild(document.createTextNode(el.textContent), el);
+            parent.normalize();
+        });
+    }
+
+    // Функция для обновления отображения активных фильтров
+    function updateActiveFilters() {
+        const filters = [
+            { id: 'roleFilter', name: 'Роль', value: getSelectDisplayValue('roleFilter') },
+            { id: 'sortFilter', name: 'Сортировка', value: getSelectDisplayValue('sortFilter') }
+        ];
+
+        const idFilter = document.getElementById('idFilter').value;
+        const searchText = document.getElementById('searchInput').value;
+
+        const activeFiltersDiv = document.getElementById('activeFilters');
+        activeFiltersDiv.innerHTML = '';
+
+        // Добавляем активные фильтры из select
+        filters.forEach(filter => {
+            if (filter.value && filter.value !== 'all' && filter.value !== 'По имени (А-Я)') {
+                addFilterTag(activeFiltersDiv, filter.name, filter.value, filter.id);
+            }
+        });
+
+        // Добавляем фильтр по ID
+        if (idFilter) {
+            addFilterTag(activeFiltersDiv, 'ID', idFilter, 'idFilter');
+        }
+
+        // Добавляем поисковый фильтр
+        if (searchText) {
+            addFilterTag(activeFiltersDiv, 'Поиск', searchText, 'searchInput');
+        }
+    }
+
+    // Вспомогательная функция для получения отображаемого значения select
+    function getSelectDisplayValue(selectId) {
+        const select = document.getElementById(selectId);
+        if (!select) return 'all';
+        const selectedOption = select.options[select.selectedIndex];
+        return selectedOption ? selectedOption.text : 'all';
+    }
+
+    // Функция для добавления тега фильтра
+    function addFilterTag(container, filterName, filterValue, filterId) {
+        const displayValue = filterValue.length > 30 ? filterValue.substring(0, 27) + '...' : filterValue;
+        
+        const tag = document.createElement('span');
+        tag.className = 'filter-tag';
+        tag.innerHTML = `${filterName}: ${displayValue} <i class="fas fa-times" onclick="removeFilter('${filterId}')"></i>`;
+        container.appendChild(tag);
+    }
+
+    // Функция для удаления конкретного фильтра
+    function removeFilter(filterId) {
+        if (filterId === 'searchInput') {
+            document.getElementById('searchInput').value = '';
+        } else if (filterId === 'idFilter') {
+            document.getElementById('idFilter').value = '';
+        } else {
+            const select = document.getElementById(filterId);
+            if (select) {
+                select.value = filterId === 'roleFilter' ? 'all' : 'name_asc';
+                select.dispatchEvent(new Event('change'));
+            }
+        }
+        
+        filterUsers();
+    }
+
+    // Функция для сброса всех фильтров
+    function clearAllFilters() {
+        document.getElementById('roleFilter').value = 'all';
+        document.getElementById('sortFilter').value = 'name_asc';
+        document.getElementById('idFilter').value = '';
+        document.getElementById('searchInput').value = '';
+        
+        const anyRadio = document.querySelector('input[name="searchMode"][value="any"]');
+        if (anyRadio) anyRadio.checked = true;
+        
+        filterUsers();
+    }
+
+    // Функция для отображения пустого состояния
+    function showEmptyState(isEmpty) {
+        const container = document.getElementById('usersContainer');
+        let emptyState = container.querySelector('.empty-state-filtered');
+
+        if (emptyState) {
+            emptyState.remove();
+        }
+
+        if (isEmpty && originalUsersData.length > 0) {
+            emptyState = document.createElement('div');
+            emptyState.className = 'empty-state empty-state-filtered';
+            emptyState.innerHTML = `
+                <i class="fas fa-filter fa-3x"></i>
+                <h3>Ничего не найдено</h3>
+                <p>Попробуйте изменить параметры фильтрации</p>
+                <button class="btn btn-secondary" onclick="clearAllFilters()" style="margin-top: 15px;">
+                    <i class="fas fa-times"></i> Сбросить фильтры
+                </button>
+            `;
+            container.appendChild(emptyState);
+        }
+    }
+
+    // Функции для управления формами
+    function showEditForm(userId) {
+        const form = document.getElementById(`editForm-${userId}`);
+        if (form) {
+            form.classList.add('show');
+        }
+    }
+
+    function hideEditForm(userId) {
+        const form = document.getElementById(`editForm-${userId}`);
+        if (form) {
+            form.classList.remove('show');
+        }
+    }
+
+    function showAddUserForm() {
+        const form = document.getElementById('addUserForm');
+        if (form) {
+            form.classList.add('show');
+        }
+    }
+
+    function hideAddUserForm() {
+        const form = document.getElementById('addUserForm');
+        if (form) {
+            form.classList.remove('show');
+        }
+    }
+
+    // Инициализация при загрузке страницы
+    document.addEventListener('DOMContentLoaded', function() {
+        // Собираем данные пользователей
+        collectUsersData();
+
+        // Добавляем обработчики событий для всех фильтров
+        const filterElements = [
+            'roleFilter', 'sortFilter', 'idFilter', 'searchInput'
+        ];
+        
+        filterElements.forEach(id => {
+            const element = document.getElementById(id);
+            if (element) {
+                element.addEventListener('change', filterUsers);
+                element.addEventListener('keyup', function(e) {
+                    if (e.key === 'Enter') {
+                        filterUsers();
+                    }
+                });
+            }
+        });
+        
+        // Обработчик для radio кнопок
+        document.querySelectorAll('input[name="searchMode"]').forEach(radio => {
+            radio.addEventListener('change', filterUsers);
+        });
+        
+        // Применяем фильтры из URL если есть
+        const urlParams = new URLSearchParams(window.location.search);
+        
+        const filterMappings = {
+            'role': 'roleFilter',
+            'sort': 'sortFilter',
+            'id': 'idFilter',
+            'search': 'searchInput'
+        };
+        
+        Object.keys(filterMappings).forEach(param => {
+            if (urlParams.has(param)) {
+                const element = document.getElementById(filterMappings[param]);
+                if (element) {
+                    element.value = urlParams.get(param);
+                }
+            }
+        });
+        
+        if (urlParams.has('searchMode')) {
+            const radio = document.querySelector(`input[name="searchMode"][value="${urlParams.get('searchMode')}"]`);
+            if (radio) radio.checked = true;
+        }
+        
+        // Применяем фильтры
+        filterUsers();
+    });
+</script>
+</body>
+</html>

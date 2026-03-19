@@ -41,6 +41,7 @@
             --warning-color: #f59e0b;
             --danger-color: #ef4444;
             --code-bg: rgba(0, 0, 0, 0.3);
+            --lifetime-color: #8b5cf6;
         }
 
         /* ========== ИНДУСТРИАЛЬНЫЙ ФОН ========== */
@@ -846,6 +847,128 @@
             border: 1px solid var(--border-color);
         }
 
+        /* ========== НОВЫЕ СТИЛИ ДЛЯ УПРАВЛЕНИЯ СРОКОМ ЖИЗНИ ========== */
+        .lifetime-control {
+            margin-top: 15px;
+            padding: 15px;
+            background: rgba(139, 92, 246, 0.1);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 8px;
+        }
+
+        .lifetime-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            color: var(--lifetime-color);
+        }
+
+        .lifetime-header i {
+            font-size: 1.2rem;
+        }
+
+        .lifetime-header h4 {
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        .lifetime-display {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+
+        .current-lifetime {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .lifetime-value {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--lifetime-color);
+        }
+
+        .lifetime-unit {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .lifetime-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn-lifetime {
+            background: rgba(139, 92, 246, 0.2);
+            border: 1px solid rgba(139, 92, 246, 0.4);
+            color: var(--lifetime-color);
+            width: 36px;
+            height: 36px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 1.2rem;
+        }
+
+        .btn-lifetime:hover {
+            background: rgba(139, 92, 246, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .btn-lifetime:active {
+            transform: translateY(0);
+        }
+
+        .btn-lifetime-save {
+            background: linear-gradient(135deg, var(--lifetime-color), #6d28d9);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+            display: none;
+            align-items: center;
+            gap: 6px;
+            margin-left: auto;
+        }
+
+        .btn-lifetime-save.show {
+            display: inline-flex;
+        }
+
+        .btn-lifetime-save:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px -5px var(--lifetime-color);
+        }
+
+        .lifetime-date {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px dashed rgba(139, 92, 246, 0.3);
+        }
+
+        .lifetime-date i {
+            color: var(--lifetime-color);
+            margin-right: 5px;
+        }
+
         /* ========== ПУСТОЕ СОСТОЯНИЕ ========== */
         .empty-state {
             text-align: center;
@@ -926,6 +1049,15 @@
             .request-header {
                 flex-direction: column;
                 align-items: flex-start;
+            }
+
+            .lifetime-controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .btn-lifetime-save {
+                margin-left: 0;
             }
         }
     </style>
@@ -1237,6 +1369,57 @@
                                 </div>
                             </div>
 
+                            <!-- НОВЫЙ БЛОК: Управление сроком жизни заявки -->
+                            <div class="lifetime-control">
+                                <div class="lifetime-header">
+                                    <i class="fas fa-hourglass-half"></i>
+                                    <h4>Управление сроком жизни заявки</h4>
+                                </div>
+                                
+                                <div class="lifetime-display">
+                                    <div class="current-lifetime">
+                                        <i class="fas fa-clock"></i>
+                                        <span>Текущий срок:</span>
+                                        <span class="lifetime-value" id="lifetime-value-{{ promise.id }}">
+                                            {% if promise.die_at %}
+                                                {% set days_left = ((promise.die_at - now).days) %}
+                                                {{ days_left if days_left > 0 else 0 }}
+                                            {% else %}
+                                                ∞
+                                            {% endif %}
+                                        </span>
+                                        <span class="lifetime-unit">
+                                            {% if promise.die_at %}
+                                                дней
+                                            {% else %}
+                                                (бессрочно)
+                                            {% endif %}
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <div class="lifetime-controls">
+                                    <button class="btn-lifetime" onclick="adjustLifetime({{ promise.id }}, -1)" title="Уменьшить на 1 день">
+                                        <i class="fas fa-minus"></i>
+                                    </button>
+                                    <button class="btn-lifetime" onclick="adjustLifetime({{ promise.id }}, 1)" title="Увеличить на 1 день">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                    
+                                    <!-- Кнопка сохранения (появляется только после изменений) -->
+                                    <button class="btn-lifetime-save" id="save-lifetime-{{ promise.id }}" onclick="saveLifetime({{ promise.id }})">
+                                        <i class="fas fa-save"></i> Сохранить
+                                    </button>
+                                </div>
+
+                                {% if promise.die_at %}
+                                <div class="lifetime-date">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    <span>Автоматическое удаление: {{ promise.die_at.strftime('%d.%m.%Y %H:%M') }}</span>
+                                </div>
+                                {% endif %}
+                            </div>
+
                             {% if promise.status == "На рассмотрении" %}
                             <div class="request-actions">
                                 <form method="POST" action="/admin/requests/{{ promise.id }}/approve" style="display: inline;">
@@ -1307,6 +1490,9 @@
     </div>
 
 <script>
+    // Объект для хранения изменений срока жизни
+    const lifetimeChanges = {};
+
     // Функция для получения уникальных операторов из данных
     function getUniqueOperators() {
         const cards = document.querySelectorAll('.request-card');
@@ -1718,6 +1904,70 @@
         console.log('Количество дубликатов операторов:', operators.length - uniqueOperators.length);
         
         return !hasDuplicates;
+    }
+
+    // ========== НОВЫЕ ФУНКЦИИ ДЛЯ УПРАВЛЕНИЯ СРОКОМ ЖИЗНИ ==========
+    
+    // Функция для регулировки срока жизни
+    function adjustLifetime(requestId, delta) {
+        const lifetimeElement = document.getElementById(`lifetime-value-${requestId}`);
+        const saveButton = document.getElementById(`save-lifetime-${requestId}`);
+        
+        if (!lifetimeElement) return;
+        
+        // Получаем текущее значение
+        let currentValue = lifetimeElement.textContent.trim();
+        
+        // Если бессрочно, начинаем с 30 дней при первом изменении
+        if (currentValue === '∞') {
+            currentValue = '30';
+            lifetimeElement.textContent = currentValue;
+            lifetimeElement.nextElementSibling.textContent = ' дней';
+        } else {
+            // Преобразуем в число и изменяем
+            let numValue = parseInt(currentValue) || 0;
+            numValue = Math.max(0, numValue + delta); // Не даем уйти в минус
+            currentValue = numValue.toString();
+            lifetimeElement.textContent = currentValue;
+        }
+        
+        // Сохраняем изменение
+        lifetimeChanges[requestId] = currentValue;
+        
+        // Показываем кнопку сохранения
+        saveButton.classList.add('show');
+    }
+    
+    // Функция для сохранения изменения срока жизни
+    function saveLifetime(requestId) {
+        const newLifetime = lifetimeChanges[requestId];
+        
+        if (!newLifetime) {
+            alert('Нет изменений для сохранения');
+            return;
+        }
+        
+        // Создаем форму для отправки
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = `/admin/requests/${requestId}/update-lifetime`;
+        form.style.display = 'none';
+        
+        // Добавляем поле с новым значением
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'days';
+        input.value = newLifetime;
+        form.appendChild(input);
+        
+        // Добавляем форму в документ и отправляем
+        document.body.appendChild(form);
+        form.submit();
+        
+        // Удаляем форму после отправки (не обязательно, но для чистоты)
+        setTimeout(() => {
+            document.body.removeChild(form);
+        }, 1000);
     }
 
     // Инициализация при загрузке страницы
